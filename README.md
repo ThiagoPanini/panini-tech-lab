@@ -1,5 +1,5 @@
 <div align="center">
-    <br><img src="https://i.imgur.com/Us8Xi9w.gif" alt="panini-tech-lab logo">
+    <br><img src="https://i.imgur.com/VgAyWwy.gif" alt="panini-tech-lab logo">
 </div>
   
 <div align="center">
