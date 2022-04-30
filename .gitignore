@@ -11,3 +11,6 @@ tech/hive/livros/apache-hive-essentials/book-github-resources
 
 # Arquivos auxiliares
 *.ipynb_checkpoints
+
+# Evitando o compartilhamento de PDFs de livros indevidamenta
+tech/*/livros/*/*.pdf
