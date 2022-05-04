@@ -1,10 +1,12 @@
+# Kafka
+
 ___
 **Curso:** Apache Kafka Series - Learn Apache Kafka for Beginners
 **Autor:** Stephane Maarek
 **Título:** Motivações para Implementação do Kafk
 ___
 
-# Problema
+## Problema
 
 - Em grandes sitemas, a existência de diversas origens e múltiplos destinos para os dados exigia um grande trabalho de configuração
 - Nesse ceário, muitas rotas eram necessárias e o esforço operacional era imenso
@@ -15,7 +17,9 @@ ___
   - Schema: os dados irão suportar mudanças em seu esquema?
   - Requisições: os sistemas origem terão um grande aumento de carga devido às conexões e integrações com os destinos
 
-# Solução
+___
+
+## Solução
 
 - O Apache Kafka surgiu para solucionar alguns problemas relacionados a integração dos dados de diferentes fontes e destinos
 - Com o Kafka, este processo pode ser simplificado e melhor gerenciado em um esquema de produtores e consumidores
@@ -23,15 +27,19 @@ ___
 - Os sistemas origem irão produzir os dados para o Kafka
 - Os sitemas destino irão consumir os dados do Kafka
 
-# Benefícios
+___
+
+## Benefícios
 
 - O Kafka possui uma arquitetura distribuída, resiliente e tolerante à falhas
 - Possui escalabilidade horizontal através da adição de brokers (servidores)
 - Pode escalar para milhões de mensagens por segundo
-- Possui alta performance 
+- Possui alta performance
 - Latência abaixo de 10ms (real time)
 
-# Casos de Uso
+___
+
+## Casos de Uso
 
 - Sistemas de mensagens
 - Monitorador de atividades
@@ -42,7 +50,9 @@ ___
 - Integração com tecnologias de Big Data (Hadoop, Spark, Flink, Storm)
 - Arquiteturas de microsserviços no conceito pub/sub (publisher/subscriber)
 
-# Detalhes Adicionais
+___
+
+## Detalhes Adicionais
 
 - O Kafka foi criado pelo LinkedIn e hoje é um projeto Open Source suportado por grandes companhias, como por exemplo:
   - Confluent
