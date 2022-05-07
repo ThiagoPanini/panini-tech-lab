@@ -1,4 +1,4 @@
-# API
+# Definição de API
 
 ___
 **Curso:** API and Web Service Introduction
@@ -10,12 +10,12 @@ ___
 
 - Acrônimo para *Application Programming Interface*
 - Interface de programação de aplicativos
-- Formado pelos elementos:
+- Formada pelos elementos:
 
 | Termo | Significado |
 | :---: | :---: |
 | Aplicação | Software que executa determinada tarefa |
-| Programa | Procrama que executa a tarefa na aplicação |
+| Programa | Programa que executa a tarefa na aplicação |
 | Interface | Local onde o programa é executado |
 
 Uma API existe quando o usuário pode solicitar (**I**) a um programa de computador (**P**) para ser executado em uma determinada aplicação (**A**).

@@ -1,4 +1,4 @@
-# API
+# O Protocolo HTTP
 
 ___
 **Curso:** API and Web Service Introduction
@@ -23,7 +23,6 @@ ___
     - Método (ex: `GET`, `POST`, `PUT`, `DELETE`, etc)
     - Diretório da URL (ex: `/search`)
     - Parâmetros (ex: `?q=termo`)
-    - Status Code (ex: `200` - apenas na resposta)
   - **Headers**
     - Cabeçalho com informações sobre a requisição e a resposta. Existem diferentes tipos para requisição e resposta.
     - `Authorizator`
@@ -32,12 +31,14 @@ ___
     - `Host`
     - Entre vários outros...
   - **Blank Line**
-    - Serve para separar os *headers* do *body*
+    - Serve para separar o *header* do *body*
   - **Body**
     - Conteúdo da requisição/resposta
     - Considera o `Content-Type` do *header* para informar o tipo de conteúdo
 
-- O formato da **start line** em uma API é:
-  - *Requisição*: `<método> <API program folder> <parameters> <http version>` (ex: `GET /search?q=nba HTTP/1.1`)
+O formato da **start line** em uma API é:
 
-- Já o **header** comporta 
+- *Requisição*: `<método> <API program folder> <parameters> <http version>` 
+- *Exemplo*: `GET www.google.com/search?q=nba HTTP/1.1`
+
+Já o **header** comporta 
