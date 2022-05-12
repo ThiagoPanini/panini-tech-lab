@@ -1,6 +1,12 @@
-<logo>
+
+## Table of Contents
+
+- [Dados para Exploração](#dados-para-exploracao)
+  - [Activity Data](#activity-data)
+  - [Airbnb](#airbnb)
 
 ___
+
 
 ## Dados para Exploração
 
@@ -9,6 +15,8 @@ Em meio a jornada de aprendizado no universo de tecnologia, nada mais gratifican
 Neste cenário, este diretório tem como objetivo alocar conjuntos de dados retirados de fontes públicas disponíveis em repositórios conhecidos da internet, livros, páginas do github e outras referências tecnicamente confiáveis para serem alvos das soluções e produtos de dados construídos e documentados neste repositório.
 
 Em complemento, este documento servirá como um grande guia para o detalhamento do conteúdo de cada uma das bases de dados obtidas, garantindo aos usuários um conhecimento prévio e completo de tudo o que poderá ser usado deste ponto em diante em tarefas *hands on*.
+
+> Inserir tabela resumo com bases, indicadores, hyperlinks, etc...
 
 ___
 
