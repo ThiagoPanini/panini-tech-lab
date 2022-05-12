@@ -1,12 +1,13 @@
 
 ## Table of Contents
 
-- [Dados para Exploração](#dados-para-exploracao)
+- [Table of Contents](#table-of-contents)
+- [Dados para Exploração](#dados-para-exploração)
   - [Activity Data](#activity-data)
   - [Airbnb](#airbnb)
+  - [Bike Data](#bike-data)
 
 ___
-
 
 ## Dados para Exploração
 
@@ -16,7 +17,10 @@ Neste cenário, este diretório tem como objetivo alocar conjuntos de dados reti
 
 Em complemento, este documento servirá como um grande guia para o detalhamento do conteúdo de cada uma das bases de dados obtidas, garantindo aos usuários um conhecimento prévio e completo de tudo o que poderá ser usado deste ponto em diante em tarefas *hands on*.
 
-> Inserir tabela resumo com bases, indicadores, hyperlinks, etc...
+| Base de Dados | Formato dos Dados | Quantidade de Arquivos | Volume Total |
+| :---: | :---: | :---: | :---: |
+| [Activity Data](#activity-data) | JSON | 80 | 1,1 GB |
+| [Airbnb](#airbnb) | CSV | 1 | 32MB |
 
 ___
 
@@ -163,3 +167,8 @@ ___
 | calculated_host_listings_count_private_rooms | Teste | <class 'int'> | 0 |
 | calculated_host_listings_count_shared_rooms | Teste | <class 'int'> | 0 |
 | reviews_per_month | Teste | <class 'float'> | 1.54 |
+
+___
+
+### Bike Data
+
