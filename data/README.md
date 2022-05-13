@@ -6,6 +6,13 @@
   - [Activity Data](#activity-data)
   - [Airbnb](#airbnb)
   - [Bike Data](#bike-data)
+    - [Station](#station)
+    - [Trip](#trip)
+  - [Blogs](#blogs)
+  - [Employee](#employee)
+    - [General/Id](#generalid)
+    - [Contract](#contract)
+    - [Hr](#hr)
 
 ___
 
@@ -172,3 +179,118 @@ ___
 
 ### Bike Data
 
+> Dados públicos de usuários de serviços de empréstimos de bicicleta de São Francisco. A base disponível foi anonimizada e contém registros de viagens de bicicletas realizadas entre Agosto de 2013 e Agosto de 2015. Seu conteúdo está dividido em dois sub-diretórios:
+>
+> - `/station`: contém dados que representam a estação (metrô) onde usuários podem coletar e devolver bicicletas
+> - `/trip`: contém dados de viagens individuais de usuários
+>
+
+- 📌 **Acesso:**
+  - [data/bike-data/station](https://github.com/ThiagoPanini/panini-tech-lab/tree/main/data/bike-data/station)
+  - [data/bike-data/trip](https://github.com/ThiagoPanini/panini-tech-lab/tree/main/data/bike-data/trip)
+- 🎲 **Formato dos dados:** CSV
+- 📂 **Quantidade de arquivos:** 2
+- 📦 **Volume total aproximado:** 41MB
+- 🌎 **Origem:** [Repositório Github - Spark the Definitive Guide](https://github.com/databricks/Spark-The-Definitive-Guide)
+
+#### Station
+
+| Coluna | Descrição | Tipo Primitivo | Exemplo |
+| :---: | :---: | :---: | :---: |
+| station_id | ID da estação onde foi realizada a coleta da bicicleta | <class 'int'> | 2 |
+| name | Nome da estação onde foi realizada a coleta da bicicleta | <class 'str'> | San Jose Diridon Caltrain Station |
+| lat | Latitude do local de coleta da bicicleta | <class 'float'> | 37.329732 |
+| long | Longitude do local de coleta da bicicleta | <class 'float'> | -121.901782 |
+| dockcount | A definir | <class 'int'> | 27 |
+| landmark | Cidade do local de coleta da bicicleta | <class 'str'> | San Jose |
+| installation | Data da coleta da bicicleta | <class 'str'> | 8/6/2013 |
+
+#### Trip
+
+| Coluna | Descrição | Tipo Primitivo | Exemplo |
+| :---: | :---: | :---: | :---: |
+| Trip ID | ID da viagem realizada | <class 'int'> | 913460 |
+| Duration | Duração da viagem de bicicleta | <class 'int'> | 765 |
+| Start Date | Data de início da viagem | <class 'str'> | 8/31/2015 23:26 |
+| Start Station | Estação de início da viagem (coleta da bicicleta) | <class 'str'> | Harry Bridges Plaza (Ferry Building) |
+| Start Terminal | Terminal de início da viagem (coleta da bicicleta) | <class 'int'> | 50 |
+| End Date | Data de finalização da viagem | <class 'str'> | 8/31/2015 23:39 |
+| End Station | Estação de finalização da viagem (entrega da bicicleta) | <class 'str'> | San Francisco Caltrain (Townsend at 4th) |
+| End Terminal | Terminal de finalização da viagem (entrega da bicicleta) | <class 'int'> | 70 |
+| Bike # | Identificador da bicicleta utilizada na viagem | <class 'int'> | 288 |
+| Subscriber Type | Tipo de inscrição do usuário | <class 'str'> | Subscriber |
+| Zip Code | CEP | <class 'int'> | 2139 |
+
+___
+
+### Blogs
+
+> Base de dados contendo informações sobre blogs publicados na internet. Em um caráter totalmente exploratório e fictício, esta base possui apenas alguns elementos que podem ser utilizados para testes dentro do contexto de características de blogs geradas manualmente.
+
+- 📌 **Acesso:** [data/blogs](https://github.com/ThiagoPanini/panini-tech-lab/tree/main/data/blogs)
+- 🎲 **Formato dos dados:** JSON
+- 📂 **Quantidade de arquivos:** 1
+- 📦 **Volume total aproximado:** 1KB
+- 🌎 **Origem:** [Repositório Github - Spark the Definitive Guide](https://github.com/databricks/Spark-The-Definitive-Guide)
+
+| Coluna | Descrição | Tipo Primitivo | Exemplo |
+| :---: | :---: | :---: | :---: |
+| Id | ID do blog | <class 'int'> | 1 |
+| First | Primeiro nome do autor do blog | <class 'str'> | Jules |
+| Last | Sobrenome do autor do blog | <class 'str'> | Damji |
+| Url | Link para acesso ao blog | <class 'str'> | https://tinyurl.1 |
+| Published | Data de publicação do blog | <class 'str'> | 1/4/2016 |
+| Hits | Quantidade de acessos do blog | <class 'int'> | 4535 |
+| Campaigns | Locais onde o blog foi compartilhado | <class 'str'> | [twitter, LinkedIn] |
+
+___
+
+### Employee
+
+> Esta base de dados possui um contexto relacionado a funcionários de uma determinada companhia e seu conteúdo foi gerado manualmente para fins exploratórios. O conjunto está dividido em 4 sub-diretórios, sendo eles:
+
+> - `contract`: dados relacionados ao contrato de trabalho de cada funcionário
+> - `general/id`: dados cadastrais dos funcionários
+> - `hr`: dados relacionados ao horário de serviço de cada funcionário
+> 
+> A grande vantagem na utilização destes conjuntos de dados está atrelada às suas respectivas variedades. Extraídos de um livro específico de Apache Hive, o conteúdo de cada arquivo possui diferentes cenários de delimitação e tipos primitivos complexos, permitindo uma exploração variada de tópicos específicos.
+
+- 📌 **Acesso:**
+  - [data/employee/contract](https://github.com/ThiagoPanini/panini-tech-lab/tree/main/data/employee/contract)
+  - [data/employee/general](https://github.com/ThiagoPanini/panini-tech-lab/tree/main/data/employee/general)
+  - [data/employee/hr](https://github.com/ThiagoPanini/panini-tech-lab/tree/main/data/employee/hr)
+  - [data/employee/id](https://github.com/ThiagoPanini/panini-tech-lab/tree/main/data/employee/id)
+- 🎲 **Formato dos dados:** TXT
+- 📂 **Quantidade de arquivos:** 4
+- 📦 **Volume total aproximado:** 2KB
+- 🌎 **Origem:** [Repositório Github - Apache Hive Essentials](https://github.com/PacktPublishing/Apache-Hive-Essentials-Second-Edition)
+
+#### General/Id
+
+| Coluna | Descrição | Tipo Primitivo | Exemplo |
+| :---: | :---: | :---: | :---: |
+| name | Nome do funcionário | STRING | Michael |
+| work_place | Campo com informações de local de trabalho (campo complexo) | ARRAY | Montreal,Toronto |
+| gender_age | Gênero e idade do funcionário (campo complexo) | STRUCT | Male,30 |
+| skills_score | Habilidades e proficiência do funcionário em data habilidade (campo complexo) | MAP | DB:80 |
+| depart_title | Departamento e cargo do funcionário (campo complexo) | MAP | Developer:Lead |
+
+#### Contract
+
+| Coluna | Descrição | Tipo Primitivo | Exemplo |
+| :---: | :---: | :---: | :---: |
+| name | Nome do funcionário | STRING | Michael |
+| dept_num | Número do departamento do funcionário | INT | 1000 |
+| employee_id | Identificador únido do funcionário | INT | 100 |
+| salary | Salário do funcionário | INT | 5000 |
+| type | Tipo de jornada do funcionário | STRING | full |
+| start_date | Data de início do contrato de trabalho do funcionário | DATE | 2014-01-29 |
+
+#### Hr
+
+| Coluna | Descrição | Tipo Primitivo | Exemplo |
+| :---: | :---: | :---: | :---: |
+| name | Nome do funcionário | STRING | Michael |
+| employee_id | Identificador únido do funcionário | INT | 100 |
+| sin_number | A definir | STRING | 547-968-091 |
+| start_date | Data de início do contrato de trabalho do funcionário | DATE | 2014-01-29 |
