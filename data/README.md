@@ -16,7 +16,12 @@
   - [Flights Data](#flights-data)
     - [Airport Codes NA](#airport-codes-na)
     - [Departure Delays](#departure-delays)
-- [IOT Devices](#iot-devices)
+  - [IOT Devices](#iot-devices)
+  - [Loans](#loans)
+  - [Retail Data](#retail-data)
+  - [San Francisco Fire](#san-francisco-fire)
+    - [Calls](#calls)
+    - [Incidents](#incidents)
 
 ___
 
@@ -252,7 +257,7 @@ ___
 ### Employee
 
 > Esta base de dados possui um contexto relacionado a funcionários de uma determinada companhia e seu conteúdo foi gerado manualmente para fins exploratórios. O conjunto está dividido em 4 sub-diretórios, sendo eles:
-
+>
 > - `contract`: dados relacionados ao contrato de trabalho de cada funcionário
 > - `general/id`: dados cadastrais dos funcionários
 > - `hr`: dados relacionados ao horário de serviço de cada funcionário
@@ -304,7 +309,7 @@ ___
 ### Flights Data
 
 > Conjunto de dados formato por 2 principais subdiretórios contendo dados relacionados a viagens de avião realizadas nos Estados Unidos. A principal riqueza neste conjunto se dá pela existência de um subdiretório adicional contendo dados sumarizados nos mais variados formatos, incluindo avro, csv, json, orc e parquet. Com isso, os usuários podem realizar simulações em fluxos de análise de dados considernado cenários distintos.
-
+>
 > `airport-codes-na`: Tabela auxiliar com o código e descrição de aeroportos na América do Norte.
 > `departure-delays`: Dados de viagens realizadas em diferentes datas, origens e destinos.
 
@@ -315,7 +320,7 @@ ___
 - 🎲 **Formato dos dados:** Diversos
 - 📂 **Quantidade de arquivos:** 4
 - 📦 **Volume total aproximado:** 33MB
-- 🌎 **Origem:** [Repositório Github - Apache Hive Essentials](https://github.com/PacktPublishing/Apache-Hive-Essentials-Second-Edition)
+- 🌎 **Origem:** [Repositório Github - Spark the Definitive Guide](https://github.com/databricks/Spark-The-Definitive-Guide)
 
 #### Airport Codes NA
 
@@ -338,30 +343,185 @@ ___
 
 ___
 
-## IOT Devices
+### IOT Devices
 
-- 📌 **Acesso:** [data/flights-data/airport-codes-na](https://github.com/ThiagoPanini/panini-tech-lab/tree/main/data/flights-data/airport-codes-na)
-  - [data/flights-data/departure-delays](https://github.com/ThiagoPanini/panini-tech-lab/tree/main/data/flights-data/departure-delays)
-  - [data/flights-data/summary-data](https://github.com/ThiagoPanini/panini-tech-lab/tree/main/data/flights-data/summary-data)
-- 🎲 **Formato dos dados:** Diversos
-- 📂 **Quantidade de arquivos:** 4
-- 📦 **Volume total aproximado:** 33MB
-- 🌎 **Origem:** [Repositório Github - Apache Hive Essentials](https://github.com/PacktPublishing/Apache-Hive-Essentials-Second-Edition)
+> Esta é uma base de dados gerada a partir de dados fictícios de leituras de dispositivos IoT (Internet of Things). Seu conteúdo está relacionado a informações de diferentes sensores localizados em diferentes localidades que enviam dados de grandezas como temperatura, umidade, emissão de CO2 e nível de bateria. Apesar de conter dados fictícios, esta base permite analisar situações interessantes, como por exemplo, a detecção de dispositivos danificados com um baixo nível de bateria, o levantamento de locais com maior emissão de CO2, valores máximos e mínimos de temperatura e umidade, entre outros.
+
+- 📌 **Acesso:** [data/iot-devices](https://github.com/ThiagoPanini/panini-tech-lab/tree/main/data/iot-devices)
+- 🎲 **Formato dos dados:** JSON
+- 📂 **Quantidade de arquivos:** 1
+- 📦 **Volume total aproximado:** 60MB
+- 🌎 **Origem:** [Repositório Github - Learning Spark](https://github.com/databricks/LearningSparkV2/tree/master/databricks-datasets/learning-spark-v2)
 
 | Coluna | Descrição | Tipo Primitivo | Exemplo |
 | :---: | :---: | :---: | :---: |
-| device_id | A definir | <class 'int'> | 1 |
-| device_name | A definir | <class 'str'> | meter-gauge-1xbYRYcj |
-| ip | A definir | <class 'str'> | 68.161.225.1 |
+| device_id | ID do dispositivo de medição | <class 'int'> | 1 |
+| device_name | Nome do dispositivo de medição | <class 'str'> | meter-gauge-1xbYRYcj |
+| ip | Endereço de IP do dispositivo de medição | <class 'str'> | 68.161.225.1 |
 | cca2 | A definir | <class 'str'> | US |
 | cca3 | A definir | <class 'str'> | USA |
 | cn | A definir | <class 'str'> | United States |
-| latitude | A definir | <class 'float'> | 38.0 |
-| longitude | A definir | <class 'float'> | -97.0 |
-| scale | A definir | <class 'str'> | Celsius |
-| temp | A definir | <class 'int'> | 34 |
-| humidity | A definir | <class 'int'> | 51 |
-| battery_level | A definir | <class 'int'> | 8 |
-| c02_level | A definir | <class 'int'> | 868 |
-| lcd | A definir | <class 'str'> | green |
-| timestamp | A definir | <class 'int'> | 1458444054093 |
+| latitude | Latitude do dispositivo de medição | <class 'float'> | 38.0 |
+| longitude | Longitude do dispositivo de medição | <class 'float'> | -97.0 |
+| scale | Escala de medição da leitura realizada | <class 'str'> | Celsius |
+| temp | Temperatura medida pelo dispositivo | <class 'int'> | 34 |
+| humidity | Umidade do ar medida pelo dispositivo | <class 'int'> | 51 |
+| battery_level | Nível de bateria medido pelo dispositivo | <class 'int'> | 8 |
+| c02_level | Nível de gás carbônico medido pelo dispositivo | <class 'int'> | 868 |
+| lcd | Tipo de LCD do dispositivo | <class 'str'> | green |
+| timestamp | Data e horário da medição no formato timestamp | <class 'int'> | 1458444054093 |
+
+___
+
+### Loans
+
+> Esta é uma versão modificada (subset de colunas no formato parquet) da base de dados *Lending Club Loan Data* que, por sua vez, traz dados de empréstimos realizados entre 2012 e 2017. Cada registro de empréstimo inclui informações do solicitante, bem como o status atual do empréstimo (ativo, atrasado, totalmente pago, etc.) e as informações de pagamento mais recentes.
+
+- 📌 **Acesso:** [data/loans](https://github.com/ThiagoPanini/panini-tech-lab/tree/main/data/loans)
+- 🎲 **Formato dos dados:** PARQUET
+- 📂 **Quantidade de arquivos:** 1
+- 📦 **Volume total aproximado:** 160KB
+- 🌎 **Origem:** [Repositório Github - Learning Spark](https://github.com/databricks/LearningSparkV2/tree/master/databricks-datasets/learning-spark-v2)
+
+___
+
+### Retail Data
+
+> Dados relacionados a vendas de produtos no varejo. Esta base de dados permite análises específicas relacionadas ao comércio de produtos em diferentes quantidades e valores.
+
+- 📌 **Acesso:** [data/retail-data](https://github.com/ThiagoPanini/panini-tech-lab/tree/main/data/retail-data)
+- 🎲 **Formato dos dados:** CSV
+- 📂 **Quantidade de arquivos:** 1
+- 📦 **Volume total aproximado:** 43MB
+- 🌎 **Origem:** [Repositório Github - Spark the Definitive Guide](https://github.com/databricks/Spark-The-Definitive-Guide)
+  
+| Coluna | Descrição | Tipo Primitivo | Exemplo |
+| :---: | :---: | :---: | :---: |
+| InvoiceNo | Número da invoice relacionada à compra | <class 'int'> | 536365 |
+| StockCode | Código do produto no estoque | <class 'str'> | 85123A |
+| Description | Descrição do produto adquirido | <class 'str'> | WHITE HANGING HEART T-LIGHT HOLDER |
+| Quantity | Quantidade vendida do produto | <class 'int'> | 6 |
+| InvoiceDate | Data da invoice relacionada à compra do produto | <class 'str'> | 12/1/2010 8:26 |
+| UnitPrice | Valor da compra | <class 'float'> | 2.55 |
+| CustomerID | ID do cliente que adquiriu o produto | <class 'int'> | 17850 |
+| Country | País de aquisição do produto | <class 'str'> | United Kingdom |
+
+___
+
+### San Francisco Fire
+
+> Conjuntos de dados relacionados a chamadas de emergência realizadas para o departamento de incêndios de São Francisco (EUA) e separada em dois subconjuntos:
+> 
+> `sf-fire-calls`: dados contendo chamadas para o departamento de bombeiros
+> `sf-fire-indidentes`: dados contendo incidentes registrados pelo departamento de bombeiros
+> 
+> A fonte original pode ser acessada através do [portal oficial](https://data.sfgov.org/Public-Safety/Fire-Incidents/wr8u-xric/data) do governo de São Francisco.
+
+- 📌 **Acesso:** 
+  - [data/sf-fire/calls](https://github.com/ThiagoPanini/panini-tech-lab/tree/main/data/sf-fire/calls)
+  - [data/sf-fire/incidents](https://github.com/ThiagoPanini/panini-tech-lab/tree/main/data/sf-fire/incidents)
+- 🎲 **Formato dos dados:** CSV
+- 📂 **Quantidade de arquivos:** 2
+- 📦 **Volume total aproximado:** 54MB
+- 🌎 **Origem:** [Repositório Github - Learning Spark](https://github.com/databricks/LearningSparkV2/tree/master/databricks-datasets/learning-spark-v2)
+
+#### Calls
+
+| Coluna | Descrição | Tipo Primitivo | Exemplo |
+| :---: | :---: | :---: | :---: |
+| CallNumber | Número de origem da chamada | <class 'int'> | 20110016 |
+| UnitID | Unidade de incêncios que atendeu a chamada | <class 'str'> | T13 |
+| IncidentNumber | Número do incidente registrado | <class 'int'> | 2003235 |
+| CallType | Tipo de chamada realizada | <class 'str'> | Structure Fire |
+| CallDate | Data da chamada realizada | <class 'str'> | 01/11/2002 |
+| WatchDate | Data de referência da chamada | <class 'str'> | 01/10/2002 |
+| CallFinalDisposition | Disposição final da chamada | <class 'str'> | Other |
+| AvailableDtTm | Data de disponibilidade da equipe de incêndios | <class 'str'> | 01/11/2002 01:51:44 AM |
+| Address | Endereço do incidente | <class 'str'> | 2000 Block of CALIFORNIA ST |
+| City | Cidade do incidente | <class 'str'> | SF |
+| Zipcode | CEP do incidente | <class 'int'> | 94109 |
+| Battalion | Número do batalhão de bombeiros responsável pelo atendimento | <class 'str'> | B04 |
+| StationArea | Área do incidente (relacionada à localização) | <class 'int'> | 38 |
+| Box | Quadra do incidente (relacionada à localização) | <class 'int'> | 3362 |
+| OriginalPriority | Prioridade original da chamada (antes da análise) | <class 'int'> | 3 |
+| Priority | Prioridade da chamada (durante a análise) | <class 'int'> | 3 |
+| FinalPriority | Prioridade final da chamada após avaliação (após a análise) | <class 'int'> | 3 |
+| ALSUnit | Necessidade de unidades especiais para o atendimento | <class 'bool'> | False |
+| CallTypeGroup | Categoria da chamada | <class 'float'> | nan |
+| NumAlarms | Número de alarmes registrados | <class 'int'> | 1 |
+| UnitType | Tipo da unidade de atendimento do incidente | <class 'str'> | TRUCK |
+| UnitSequenceInCallDispatch | Quantidade de unidades de prontidão para o atendimento | <class 'int'> | 2 |
+| FirePreventionDistrict | Distrito de prevenção de incêndios | <class 'int'> | 4 |
+| SupervisorDistrict | Distrito de supervisão da prevenção de incêndios | <class 'int'> | 5 |
+| Neighborhood | Vizinhança relacionada à chamada | <class 'str'> | Pacific Heights |
+| Location | Localização (latitide e longitude) da chamada | <class 'str'> | (37.7895840679362, -122.428071912459) |
+| RowID | Número de identificação do registro | <class 'str'> | 020110016-T13 |
+| Delay | Tempo de delay | <class 'float'> | 2.95 |
+
+#### Incidents
+
+| Coluna | Descrição | Tipo Primitivo | Exemplo |
+| :---: | :---: | :---: | :---: |
+| Incident Number | Número do incidente registrado | <class 'int'> | 16000003 |
+| Exposure Number | Índice de exposição do incidente | <class 'int'> | 0 |
+| Address | Endereço do incidente | <class 'str'> | Precita Av/florida Street |
+| Incident Date | Número de chamada | <class 'str'> | 01/01/2016 |
+| Call Number | Data e horário de acionamento do alarme | <class 'int'> | 160010015 |
+| Alarm DtTm | Data e horário da chegada da equipe | <class 'str'> | 01/01/2016 12:02:57 AM |
+| Arrival DtTm | Data e horário de fechamento do incidente | <class 'str'> | 01/01/2016 12:08:05 AM |
+| Close DtTm | Cidade do incidente | <class 'str'> | 01/01/2016 12:12:51 AM |
+| City | CEP do incidente | <class 'str'> | San Francisco |
+| Zipcode | Identificação do batalhão do incidente | <class 'int'> | 94110 |
+| Battalion | Área da estação relacionada ao incidente | <class 'str'> | B06 |
+| Station Area | Quadra relacionada ao incidente | <class 'int'> | 9 |
+| Box | Unidades de supressão utilizadas | <class 'int'> | 5621 |
+| Suppression Units | Unidades pessoais utilizadas | <class 'int'> | 1 |
+| Suppression Personnel | Unidades EMS utilizadas | <class 'int'> | 4 |
+| EMS Units | Unidades EMS pessoais utilizadas | <class 'int'> | 0 |
+| EMS Personnel | Outras unidades utilizadas | <class 'int'> | 0 |
+| Other Units | Outras unidades pessoais utilizadas | <class 'int'> | 0 |
+| Other Personnel | Primeira unidade no local do incidente | <class 'int'> | 0 |
+| First Unit On Scene | Estimativa de perdas (em metros quadrados) através do incidente | <class 'float'> | nan |
+| Estimated Property Loss | Estimativa de conteúdo perdido através do incidente | <class 'float'> | nan |
+| Estimated Contents Loss | Vítimas fatais de incêndio | <class 'float'> | nan |
+| Fire Fatalities | Vítimas do incêndio | <class 'int'> | 0 |
+| Fire Injuries | Vítimas fatais do incidente como um todo | <class 'int'> | 0 |
+| Civilian Fatalities | Vítimas do incidente como um todo | <class 'int'> | 0 |
+| Civilian Injuries | Número de alarmes acionados | <class 'int'> | 0 |
+| Number of Alarms | Descrição inicial da situação | <class 'float'> | nan |
+| Primary Situation | Ajuda mútua | <class 'str'> | 600 good intent call, other |
+| Mutual Aid | Ação primária tomada | <class 'str'> | n none |
+| Action Taken Primary | Ação secundária tomada | <class 'str'> | 86 investigate |
+| Action Taken Secondary | Outra ação tomada | <class 'float'> | nan |
+| Action Taken Other | Total de ocupantes alertados | <class 'float'> | nan |
+| Detector Alerted Occupants | Uso da propriedade | <class 'float'> | nan |
+| Property Use | Área de origem do incêndio | <class 'str'> | 962 residential street, road or residential driveway |
+| Area of Fire Origin | Causa do incêndio | <class 'float'> | nan |
+| Ignition Cause | Fator primário do incêndio | <class 'float'> | nan |
+| Ignition Factor Primary | Fator secundário do incêndio | <class 'float'> | nan |
+| Ignition Factor Secondary | Fonte de calor relacionada ao incêndio | <class 'float'> | nan |
+| Heat Source | Primeiro item a ser incendiado no contexto do incêndio | <class 'float'> | nan |
+| Item First Ignited | Fatores humanos associados ao incêndio | <class 'float'> | nan |
+| Human Factors Associated with Ignition | Tipo de estrutura relacionada ao incidente | <class 'float'> | nan |
+| Structure Type | Estado da estrutura afetada pelo incidente | <class 'float'> | nan |
+| Structure Status | Andar de origem do incêndio | <class 'float'> | nan |
+| Floor of Fire Origin | Flag que indica o ospalhamento do fogo | <class 'float'> | nan |
+| Fire Spread | Flag que indica que o fogo não se alastrou | <class 'float'> | nan |
+| No Flame Spead | Número de andares com danos mínimos | <class 'str'> | na |
+| Number of floors with minimum damage | Número de andares com danos significativos | <class 'float'> | nan |
+| Number of floors with significant damage | Número de andares com danos críticos | <class 'float'> | nan |
+| Number of floors with heavy damage | Número de andares com danos extremos | <class 'float'> | nan |
+| Number of floors with extreme damage | Flag que indica a presença de um detector de incêndios | <class 'float'> | nan |
+| Detectors Present | Tipo do detector de incêndios | <class 'float'> | nan |
+| Detector Type | Operação do detector de incêndios | <class 'float'> | nan |
+| Detector Operation | Efetividade do detector de incêndios | <class 'float'> | nan |
+| Detector Effectiveness | Motivo relacionado a falha no detector de incêndios | <class 'float'> | nan |
+| Detector Failure Reason | Flag de presença de sistema automático de combate a incêndio | <class 'float'> | nan |
+| Automatic Extinguishing System Present | Tipo de sistema automático de combate a incêndio | <class 'float'> | nan |
+| Automatic Extinguishing Sytem Type | Performance do sistema automático de combate a incêndio | <class 'float'> | nan |
+| Automatic Extinguishing Sytem Perfomance | Motivo relacionado a falha no sistema automático de combate a incêndio | <class 'float'> | nan |
+| Automatic Extinguishing Sytem Failure Reason | Número de aspersores em atividade | <class 'float'> | nan |
+| Number of Sprinkler Heads Operating | Distrito de supervisão do local do incidente | <class 'float'> | nan |
+| Supervisor District | Vizinhança do local do incidente | <class 'int'> | 9 |
+| Neighborhood  District | Localização do incidente (latitude e longitude) | <class 'str'> | Bernal Heights |
+| Location | A Definir | <class 'str'> | (37.7475540000296, -122.409572) |
