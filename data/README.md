@@ -1,33 +1,4 @@
-
-## Table of Contents
-
-- [Table of Contents](#table-of-contents)
-- [Dados para Exploração](#dados-para-exploração)
-  - [Activity Data](#activity-data)
-  - [Airbnb](#airbnb)
-  - [Bike Data](#bike-data)
-    - [Station](#station)
-    - [Trip](#trip)
-  - [Blogs](#blogs)
-  - [Employee](#employee)
-    - [General/Id](#generalid)
-    - [Contract](#contract)
-    - [Hr](#hr)
-  - [Flights Data](#flights-data)
-    - [Airport Codes NA](#airport-codes-na)
-    - [Departure Delays](#departure-delays)
-  - [IOT Devices](#iot-devices)
-  - [Loans](#loans)
-  - [Retail Data](#retail-data)
-  - [San Francisco Fire](#san-francisco-fire)
-    - [Calls](#calls)
-    - [Incidents](#incidents)
-  - [US Population](#us-population)
-  - [Web Logs](#web-logs)
-
-___
-
-## Dados para Exploração
+# Dados para Exploração
 
 Em meio a jornada de aprendizado no universo de tecnologia, nada mais gratificante que ter em mãos bases de dados nos mais variados formatos e contextos prontas para serem utilizadas, exploradas, enriquecidas e analisadas.
 
@@ -52,7 +23,7 @@ Em complemento, este documento servirá como um grande guia para o detalhamento 
 
 ___
 
-### Activity Data
+## Activity Data
 
 > Base de dados criada a partir da coleta de leituras de sensores de smartphones e smartwatchs enquanto seus usuários realivam algum tipo de atividade física, como bicicleta, caminhada, corrida, entre outras. Ao todo, 9 usuários foram alvo da coleta de dados e uma série de dispositivos distintos foram utilizados com sensores focados em acelerômetro e giroscópio. Esta base de dados também é conhecida como Heterogeneity Human Activity Recognition Dataset.
 
@@ -77,7 +48,7 @@ ___
 
 ___
 
-### Airbnb
+## Airbnb
 
 > Dados extarídos a partir de interações com o Airbnb nos mais diferentes cenários envolvendo a utilização de seus serviços. A base de dados possui mais de 700 atributos a serem explorados para as mais variadas finalidades.
 
@@ -198,7 +169,7 @@ ___
 
 ___
 
-### Bike Data
+## Bike Data
 
 > Dados públicos de usuários de serviços de empréstimos de bicicleta de São Francisco. A base disponível foi anonimizada e contém registros de viagens de bicicletas realizadas entre Agosto de 2013 e Agosto de 2015. Seu conteúdo está dividido em dois sub-diretórios:
 >
@@ -214,7 +185,7 @@ ___
 - 📦 **Volume total aproximado:** 41MB
 - 🌎 **Origem:** [Repositório Github - Spark the Definitive Guide](https://github.com/databricks/Spark-The-Definitive-Guide)
 
-#### Station
+### Station
 
 | Coluna | Descrição | Tipo Primitivo | Exemplo |
 | :---: | :---: | :---: | :---: |
@@ -226,7 +197,7 @@ ___
 | landmark | Cidade do local de coleta da bicicleta | <class 'str'> | San Jose |
 | installation | Data da coleta da bicicleta | <class 'str'> | 8/6/2013 |
 
-#### Trip
+### Trip
 
 | Coluna | Descrição | Tipo Primitivo | Exemplo |
 | :---: | :---: | :---: | :---: |
@@ -244,7 +215,7 @@ ___
 
 ___
 
-### Blogs
+## Blogs
 
 > Base de dados contendo informações sobre blogs publicados na internet. Em um caráter totalmente exploratório e fictício, esta base possui apenas alguns elementos que podem ser utilizados para testes dentro do contexto de características de blogs geradas manualmente.
 
@@ -266,7 +237,7 @@ ___
 
 ___
 
-### Employee
+## Employee
 
 > Esta base de dados possui um contexto relacionado a funcionários de uma determinada companhia e seu conteúdo foi gerado manualmente para fins exploratórios. O conjunto está dividido em 4 sub-diretórios, sendo eles:
 >
@@ -286,7 +257,7 @@ ___
 - 📦 **Volume total aproximado:** 2KB
 - 🌎 **Origem:** [Repositório Github - Apache Hive Essentials](https://github.com/PacktPublishing/Apache-Hive-Essentials-Second-Edition)
 
-#### General/Id
+### General/Id
 
 | Coluna | Descrição | Tipo Primitivo | Exemplo |
 | :---: | :---: | :---: | :---: |
@@ -296,7 +267,7 @@ ___
 | skills_score | Habilidades e proficiência do funcionário em data habilidade (campo complexo) | MAP | DB:80 |
 | depart_title | Departamento e cargo do funcionário (campo complexo) | MAP | Developer:Lead |
 
-#### Contract
+### Contract
 
 | Coluna | Descrição | Tipo Primitivo | Exemplo |
 | :---: | :---: | :---: | :---: |
@@ -307,7 +278,7 @@ ___
 | type | Tipo de jornada do funcionário | STRING | full |
 | start_date | Data de início do contrato de trabalho do funcionário | DATE | 2014-01-29 |
 
-#### Hr
+### Hr
 
 | Coluna | Descrição | Tipo Primitivo | Exemplo |
 | :---: | :---: | :---: | :---: |
@@ -318,7 +289,7 @@ ___
 
 ___
 
-### Flights Data
+## Flights Data
 
 > Conjunto de dados formato por 2 principais subdiretórios contendo dados relacionados a viagens de avião realizadas nos Estados Unidos. A principal riqueza neste conjunto se dá pela existência de um subdiretório adicional contendo dados sumarizados nos mais variados formatos, incluindo avro, csv, json, orc e parquet. Com isso, os usuários podem realizar simulações em fluxos de análise de dados considernado cenários distintos.
 >
@@ -334,7 +305,7 @@ ___
 - 📦 **Volume total aproximado:** 33MB
 - 🌎 **Origem:** [Repositório Github - Spark the Definitive Guide](https://github.com/databricks/Spark-The-Definitive-Guide)
 
-#### Airport Codes NA
+### Airport Codes NA
 
 | Coluna | Descrição | Tipo Primitivo | Exemplo |
 | :---: | :---: | :---: | :---: |
@@ -343,7 +314,7 @@ ___
 | Country | País de localização do aeroporto | <class 'str'> | Canada |
 | IATA | Código de identificação do aeroporto | <class 'str'> | YXX |
 
-#### Departure Delays
+### Departure Delays
 
 | Coluna | Descrição | Tipo Primitivo | Exemplo |
 | :---: | :---: | :---: | :---: |
@@ -355,7 +326,7 @@ ___
 
 ___
 
-### IOT Devices
+## IOT Devices
 
 > Esta é uma base de dados gerada a partir de dados fictícios de leituras de dispositivos IoT (Internet of Things). Seu conteúdo está relacionado a informações de diferentes sensores localizados em diferentes localidades que enviam dados de grandezas como temperatura, umidade, emissão de CO2 e nível de bateria. Apesar de conter dados fictícios, esta base permite analisar situações interessantes, como por exemplo, a detecção de dispositivos danificados com um baixo nível de bateria, o levantamento de locais com maior emissão de CO2, valores máximos e mínimos de temperatura e umidade, entre outros.
 
@@ -385,7 +356,7 @@ ___
 
 ___
 
-### Loans
+## Loans
 
 > Esta é uma versão modificada (subset de colunas no formato parquet) da base de dados *Lending Club Loan Data* que, por sua vez, traz dados de empréstimos realizados entre 2012 e 2017. Cada registro de empréstimo inclui informações do solicitante, bem como o status atual do empréstimo (ativo, atrasado, totalmente pago, etc.) e as informações de pagamento mais recentes.
 
@@ -397,7 +368,7 @@ ___
 
 ___
 
-### Retail Data
+## Retail Data
 
 > Dados relacionados a vendas de produtos no varejo. Esta base de dados permite análises específicas relacionadas ao comércio de produtos em diferentes quantidades e valores.
 
@@ -420,7 +391,7 @@ ___
 
 ___
 
-### San Francisco Fire
+## San Francisco Fire
 
 > Conjuntos de dados relacionados a chamadas de emergência realizadas para o departamento de incêndios de São Francisco (EUA) e separada em dois subconjuntos:
 > 
@@ -437,7 +408,7 @@ ___
 - 📦 **Volume total aproximado:** 54MB
 - 🌎 **Origem:** [Repositório Github - Learning Spark](https://github.com/databricks/LearningSparkV2/tree/master/databricks-datasets/learning-spark-v2)
 
-#### Calls
+### Calls
 
 | Coluna | Descrição | Tipo Primitivo | Exemplo |
 | :---: | :---: | :---: | :---: |
@@ -470,7 +441,7 @@ ___
 | RowID | Número de identificação do registro | <class 'str'> | 020110016-T13 |
 | Delay | Tempo de delay | <class 'float'> | 2.95 |
 
-#### Incidents
+### Incidents
 
 | Coluna | Descrição | Tipo Primitivo | Exemplo |
 | :---: | :---: | :---: | :---: |
@@ -540,7 +511,7 @@ ___
 
 ___
 
-### US Population
+## US Population
 
 > Dados demográficos relacionados a população dos Estados Unidos, incluindo, como principal atributo, a população de cada cidade/CEP.
 
@@ -560,7 +531,7 @@ ___
 
 ___
 
-### Web Logs
+## Web Logs
 
 > Dados fictícios gerados a partir de requisições em servidores web. Os logs são elementos fundamentais de análise em requisições e respostas em um contexto de envio e retorno de dados.
 
@@ -577,4 +548,4 @@ Os metadados dessa base de dados poderão ser melhor analisados observando diret
 - *Start line* da requisição (incluindo método, caminho de pesquisa e versão HTTP)
 - *Status code* da resposta
 - *Header* da requisição/resposta
-   
+  
