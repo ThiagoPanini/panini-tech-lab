@@ -21,6 +21,8 @@ Em complemento, este documento servirá como um grande guia para o detalhamento 
 | [US Population](#us-population) | JSON | 1 | 3MB |
 | [Web Logs](#web-logs) | LOG | 1 | 21MB |
 
+**Observação:** as descrições atreladas a cada tabela de metadados foi gerada através de uma percepção pessoal diretamente vinculada ao nome do atributo e a exemplos de seu respectivo conteúdo. Nenhuma fonte oficial de metadados foi consultada para descrever os atributos das bases aqui consolidadas.
+
 ___
 
 ## Activity Data
@@ -45,127 +47,6 @@ ___
 | x | Coordenada x da medição do usuário | <class 'float'> | 0.0014038086 |
 | y | Coordenada y da medição do usuário | <class 'float'> | 0.00050354 |
 | z | Coordenada z da medição do usuário | <class 'float'> | -0.0124053955 |
-
-___
-
-## Airbnb
-
-> Dados extarídos a partir de interações com o Airbnb nos mais diferentes cenários envolvendo a utilização de seus serviços. A base de dados possui mais de 700 atributos a serem explorados para as mais variadas finalidades.
-
-- 📌 **Acesso:** [data/airbnb](https://github.com/ThiagoPanini/panini-tech-lab/tree/main/data/airbnb)
-- 🎲 **Formato dos dados:** CSV
-- 📂 **Quantidade de arquivos:** 1
-- 📦 **Volume total aproximado:** 32MB
-- 🌎 **Origem:** [Repositório Github - Spark the Definitive Guide](https://github.com/databricks/Spark-The-Definitive-Guide)
-
-| Coluna | Descrição | Tipo Primitivo | Exemplo |
-| :---: | :---: | :---: | :---: |
-| id | A definir | <class 'int'> | 958 |
-| listing_url | A definir | <class 'str'> | https://www.airbnb.com/rooms/958 |
-| scrape_id | A definir | <class 'int'> | 20190306152813 |
-| last_scraped | A definir | <class 'str'> | 2019-03-06 |
-| name | A definir | <class 'str'> | Bright, Modern Garden Unit - 1BR/1B |
-| summary | A definir | <class 'str'> | New update: the house next door is under construction and there is the possibility of noise from 7am - 5pm. Our rates are discounted during this time period. Our bright garden unit overlooks a grassy backyard area with fruit trees and native plants. It is an oasis in a big city. The apartment comfortably fits a couple or small family. It is located on a cul de sac street that ends at lovely Duboce Park. |
-| space | A definir | <class 'str'> | Newly remodeled, modern, and bright garden unit in historic Victorian home.  *New fixtures and finishes. *Organic cotton sheets and towels. *Zero VOC and non-toxic Yolo paint. *Organic and fair-trade teas, fresh local ground coffee. *Local art on walls. *Sofa bed and Queen bed are in the same room. More of a petite apartment with a separate room for dining and kitchen. |
-| description | A definir | <class 'str'> | New update: the house next door is under construction and there is the possibility of noise from 7am - 5pm. Our rates are discounted during this time period. Our bright garden unit overlooks a grassy backyard area with fruit trees and native plants. It is an oasis in a big city. The apartment comfortably fits a couple or small family. It is located on a cul de sac street that ends at lovely Duboce Park. Newly remodeled, modern, and bright garden unit in historic Victorian home.  *New fixtures and finishes. *Organic cotton sheets and towels. *Zero VOC and non-toxic Yolo paint. *Organic and fair-trade teas, fresh local ground coffee. *Local art on walls. *Sofa bed and Queen bed are in the same room. More of a petite apartment with a separate room for dining and kitchen. *Full access to patio and backyard (shared with us and our dog who live upstairs) *Beautiful garden with fruit trees, native plants and lawn *Washer and dryer *Children's toys *Charcoal grill A family of 4 lives upstairs  |
-| experiences_offered | A definir | <class 'str'> | none |
-| neighborhood_overview | A definir | <class 'str'> | *Quiet cul de sac in friendly neighborhood *Steps away from grassy park with 2 playgrounds and Recreational Center *Very family-friendly neighborhood *Quaint shops, grocery stores and restaurants all within a 5-10 minute walk |
-| notes | A definir | <class 'str'> | Due to the fact that we have children and a dog, we are up early 7-8am and their footsteps or paws can be heard from the apartment. Our place is ideal for early risers or hard sleepers who appreciate quiet evenings more than late mornings. |
-| transit | A definir | <class 'str'> | *Public Transportation is 1/2 block away.  *Centrally located with easy access to major lines of public transportation (N-Judah, Haight #7, J-Church, Fillmore, and Bart) *No Parking is offered.  *Street parking is unmetered. From 9AM - 8PM restricted to two hours per space (this is the case for residential street parking city wide).  *Overnight and weekend parking on the street is unrestricted.  *Street cleaning happens at least 2 times a week on most streets. *Taxis suggested for Airport trips |
-| access | A definir | <class 'str'> | *Full access to patio and backyard (shared with us and our dog who live upstairs) *Beautiful garden with fruit trees, native plants and lawn *Washer and dryer *Children's toys *Charcoal grill |
-| interaction | A definir | <class 'str'> | A family of 4 lives upstairs with their dog. Normally we are able to meet guests, but we like to give people their privacy and mostly leave them alone. We are always available if anything is needed or questions need to be answered. |
-| house_rules | A definir | <class 'str'> | * No Pets - even visiting guests for a short time period. * No Smokers allowed - even if smoking off premises. |
-| thumbnail_url | A definir | <class 'float'> | nan |
-| medium_url | A definir | <class 'float'> | nan |
-| picture_url | A definir | <class 'str'> | https://a0.muscache.com/im/pictures/b7c2a199-4c17-4ba6-b81d-751719d2dac6.jpg?aki_policy=large |
-| xl_picture_url | A definir | <class 'float'> | nan |
-| host_id | A definir | <class 'int'> | 1169 |
-| host_url | A definir | <class 'str'> | https://www.airbnb.com/users/show/1169 |
-| host_name | A definir | <class 'str'> | Holly |
-| host_since | A definir | <class 'str'> | 2008-07-31 |
-| host_location | A definir | <class 'str'> | San Francisco, California, United States |
-| host_about | A definir | <class 'str'> | We are a family with 2 boys born in 2009 and 2011.  We have a new puppy (Feb 2017) named Tucker who is part black lab and part border collie. |
-| host_response_time | A definir | <class 'str'> | within an hour |
-| host_response_rate | A definir | <class 'str'> | 100% |
-| host_acceptance_rate | A definir | <class 'float'> | nan |
-| host_is_superhost | A definir | <class 'str'> | t |
-| host_thumbnail_url | A definir | <class 'str'> | https://a0.muscache.com/im/pictures/efdad96a-3efc-4bc2-bdc9-f69740a5a818.jpg?aki_policy=profile_small |
-| host_picture_url | A definir | <class 'str'> | https://a0.muscache.com/im/pictures/efdad96a-3efc-4bc2-bdc9-f69740a5a818.jpg?aki_policy=profile_x_medium |
-| host_neighbourhood | A definir | <class 'str'> | Duboce Triangle |
-| host_listings_count | A definir | <class 'int'> | 1 |
-| host_total_listings_count | A definir | <class 'int'> | 1 |
-| host_verifications | A definir | <class 'str'> | ['email', 'phone', 'facebook', 'reviews', 'kba'] |
-| host_has_profile_pic | A definir | <class 'str'> | t |
-| host_identity_verified | A definir | <class 'str'> | t |
-| street | A definir | <class 'str'> | San Francisco, CA, United States |
-| neighbourhood | A definir | <class 'str'> | Duboce Triangle |
-| neighbourhood_cleansed | A definir | <class 'str'> | Western Addition |
-| neighbourhood_group_cleansed | A definir | <class 'float'> | nan |
-| city | A definir | <class 'str'> | San Francisco |
-| state | A definir | <class 'str'> | CA |
-| zipcode | A definir | <class 'int'> | 94117 |
-| market | A definir | <class 'str'> | San Francisco |
-| smart_location | A definir | <class 'str'> | San Francisco, CA |
-| country_code | A definir | <class 'str'> | US |
-| country | A definir | <class 'str'> | United States |
-| latitude | A definir | <class 'float'> | 37.76931 |
-| longitude | A definir | <class 'float'> | -122.43386 |
-| is_location_exact | A definir | <class 'str'> | t |
-| property_type | A definir | <class 'str'> | Apartment |
-| room_type | A definir | <class 'str'> | Entire home/apt |
-| accommodates | A definir | <class 'int'> | 3 |
-| bathrooms | A definir | <class 'float'> | 1.0 |
-| bedrooms | A definir | <class 'int'> | 1 |
-| beds | A definir | <class 'int'> | 2 |
-| bed_type | A definir | <class 'str'> | Real Bed |
-| amenities | A definir | <class 'str'> | {TV,"Cable TV",Internet,Wifi,Kitchen,"Pets live on this property",Dog(s),Heating,"Family/kid friendly",Washer,Dryer,"Smoke detector","Carbon monoxide detector","First aid kit",Essentials,Shampoo,"24-hour check-in",Hangers,"Hair dryer",Iron,"Laptop friendly workspace","Self check-in",Keypad,"Private entrance","Pack ’n Play/travel crib","Room-darkening shades"} |
-| square_feet | A definir | <class 'float'> | nan |
-| price | A definir | <class 'str'> | $170.00 |
-| weekly_price | A definir | <class 'str'> | $1,120.00 |
-| monthly_price | A definir | <class 'str'> | $4,200.00 |
-| security_deposit | A definir | <class 'str'> | $100.00 |
-| cleaning_fee | A definir | <class 'str'> | $100.00 |
-| guests_included | A definir | <class 'int'> | 2 |
-| extra_people | A definir | <class 'str'> | $25.00 |
-| minimum_nights | A definir | <class 'int'> | 1 |
-| maximum_nights | A definir | <class 'int'> | 30 |
-| minimum_minimum_nights | A definir | <class 'int'> | 1 |
-| maximum_minimum_nights | A definir | <class 'int'> | 1 |
-| minimum_maximum_nights | A definir | <class 'int'> | 30 |
-| maximum_maximum_nights | A definir | <class 'int'> | 30 |
-| minimum_nights_avg_ntm | A definir | <class 'float'> | 1.0 |
-| maximum_nights_avg_ntm | A definir | <class 'float'> | 30.0 |
-| calendar_updated | A definir | <class 'str'> | today |
-| has_availability | A definir | <class 'str'> | t |
-| availability_30 | A definir | <class 'int'> | 1 |
-| availability_60 | A definir | <class 'int'> | 1 |
-| availability_90 | A definir | <class 'int'> | 2 |
-| availability_365 | A definir | <class 'int'> | 64 |
-| calendar_last_scraped | A definir | <class 'str'> | 2019-03-06 |
-| number_of_reviews | A definir | <class 'int'> | 180 |
-| number_of_reviews_ltm | A definir | <class 'int'> | 52 |
-| first_review | A definir | <class 'str'> | 2009-07-23 |
-| last_review | A definir | <class 'str'> | 2019-02-17 |
-| review_scores_rating | A definir | <class 'int'> | 97 |
-| review_scores_accuracy | A definir | <class 'int'> | 10 |
-| review_scores_cleanliness | A definir | <class 'int'> | 10 |
-| review_scores_checkin | A definir | <class 'int'> | 10 |
-| review_scores_communication | A definir | <class 'int'> | 10 |
-| review_scores_location | A definir | <class 'int'> | 10 |
-| review_scores_value | A definir | <class 'int'> | 10 |
-| requires_license | A definir | <class 'str'> | t |
-| license | A definir | <class 'str'> | STR-0001256 |
-| jurisdiction_names | A definir | <class 'str'> | {"SAN FRANCISCO"} |
-| instant_bookable | A definir | <class 'str'> | t |
-| is_business_travel_ready | A definir | <class 'str'> | f |
-| cancellation_policy | A definir | <class 'str'> | moderate |
-| require_guest_profile_picture | A definir | <class 'str'> | f |
-| require_guest_phone_verification | A definir | <class 'str'> | f |
-| calculated_host_listings_count | A definir | <class 'int'> | 1 |
-| calculated_host_listings_count_entire_homes | A definir | <class 'int'> | 1 |
-| calculated_host_listings_count_private_rooms | A definir | <class 'int'> | 0 |
-| calculated_host_listings_count_shared_rooms | A definir | <class 'int'> | 0 |
-| reviews_per_month | A definir | <class 'float'> | 1.54 |
 
 ___
 
@@ -395,8 +276,8 @@ ___
 
 > Conjuntos de dados relacionados a chamadas de emergência realizadas para o departamento de incêndios de São Francisco (EUA) e separada em dois subconjuntos:
 > 
-> `sf-fire-calls`: dados contendo chamadas para o departamento de bombeiros
-> `sf-fire-indidentes`: dados contendo incidentes registrados pelo departamento de bombeiros
+> - `sf-fire-calls`: dados contendo chamadas para o departamento de bombeiros
+> - `sf-fire-indidentes`: dados contendo incidentes registrados pelo departamento de bombeiros
 > 
 > A fonte original pode ser acessada através do [portal oficial](https://data.sfgov.org/Public-Safety/Fire-Incidents/wr8u-xric/data) do governo de São Francisco.
 
@@ -549,3 +430,123 @@ Os metadados dessa base de dados poderão ser melhor analisados observando diret
 - *Status code* da resposta
 - *Header* da requisição/resposta
   
+___
+
+## Airbnb
+
+> Dados extarídos a partir de interações com o Airbnb nos mais diferentes cenários envolvendo a utilização de seus serviços. A base de dados possui mais de 700 atributos a serem explorados para as mais variadas finalidades.
+
+- 📌 **Acesso:** [data/airbnb](https://github.com/ThiagoPanini/panini-tech-lab/tree/main/data/airbnb)
+- 🎲 **Formato dos dados:** CSV
+- 📂 **Quantidade de arquivos:** 1
+- 📦 **Volume total aproximado:** 32MB
+- 🌎 **Origem:** [Repositório Github - Spark the Definitive Guide](https://github.com/databricks/Spark-The-Definitive-Guide)
+
+| Coluna | Descrição | Tipo Primitivo | Exemplo |
+| :---: | :---: | :---: | :---: |
+| id | A definir | <class 'int'> | 958 |
+| listing_url | A definir | <class 'str'> | https://www.airbnb.com/rooms/958 |
+| scrape_id | A definir | <class 'int'> | 20190306152813 |
+| last_scraped | A definir | <class 'str'> | 2019-03-06 |
+| name | A definir | <class 'str'> | Bright, Modern Garden Unit - 1BR/1B |
+| summary | A definir | <class 'str'> | New update: the house next door is under construction and there is the possibility of noise from 7am - 5pm. Our rates are discounted during this time period. Our bright garden unit overlooks a grassy backyard area with fruit trees and native plants. It is an oasis in a big city. The apartment comfortably fits a couple or small family. It is located on a cul de sac street that ends at lovely Duboce Park. |
+| space | A definir | <class 'str'> | Newly remodeled, modern, and bright garden unit in historic Victorian home.  *New fixtures and finishes. *Organic cotton sheets and towels. *Zero VOC and non-toxic Yolo paint. *Organic and fair-trade teas, fresh local ground coffee. *Local art on walls. *Sofa bed and Queen bed are in the same room. More of a petite apartment with a separate room for dining and kitchen. |
+| description | A definir | <class 'str'> | New update: the house next door is under construction and there is the possibility of noise from 7am - 5pm. Our rates are discounted during this time period. Our bright garden unit overlooks a grassy backyard area with fruit trees and native plants. It is an oasis in a big city. The apartment comfortably fits a couple or small family. It is located on a cul de sac street that ends at lovely Duboce Park. Newly remodeled, modern, and bright garden unit in historic Victorian home.  *New fixtures and finishes. *Organic cotton sheets and towels. *Zero VOC and non-toxic Yolo paint. *Organic and fair-trade teas, fresh local ground coffee. *Local art on walls. *Sofa bed and Queen bed are in the same room. More of a petite apartment with a separate room for dining and kitchen. *Full access to patio and backyard (shared with us and our dog who live upstairs) *Beautiful garden with fruit trees, native plants and lawn *Washer and dryer *Children's toys *Charcoal grill A family of 4 lives upstairs  |
+| experiences_offered | A definir | <class 'str'> | none |
+| neighborhood_overview | A definir | <class 'str'> | *Quiet cul de sac in friendly neighborhood *Steps away from grassy park with 2 playgrounds and Recreational Center *Very family-friendly neighborhood *Quaint shops, grocery stores and restaurants all within a 5-10 minute walk |
+| notes | A definir | <class 'str'> | Due to the fact that we have children and a dog, we are up early 7-8am and their footsteps or paws can be heard from the apartment. Our place is ideal for early risers or hard sleepers who appreciate quiet evenings more than late mornings. |
+| transit | A definir | <class 'str'> | *Public Transportation is 1/2 block away.  *Centrally located with easy access to major lines of public transportation (N-Judah, Haight #7, J-Church, Fillmore, and Bart) *No Parking is offered.  *Street parking is unmetered. From 9AM - 8PM restricted to two hours per space (this is the case for residential street parking city wide).  *Overnight and weekend parking on the street is unrestricted.  *Street cleaning happens at least 2 times a week on most streets. *Taxis suggested for Airport trips |
+| access | A definir | <class 'str'> | *Full access to patio and backyard (shared with us and our dog who live upstairs) *Beautiful garden with fruit trees, native plants and lawn *Washer and dryer *Children's toys *Charcoal grill |
+| interaction | A definir | <class 'str'> | A family of 4 lives upstairs with their dog. Normally we are able to meet guests, but we like to give people their privacy and mostly leave them alone. We are always available if anything is needed or questions need to be answered. |
+| house_rules | A definir | <class 'str'> | * No Pets - even visiting guests for a short time period. * No Smokers allowed - even if smoking off premises. |
+| thumbnail_url | A definir | <class 'float'> | nan |
+| medium_url | A definir | <class 'float'> | nan |
+| picture_url | A definir | <class 'str'> | https://a0.muscache.com/im/pictures/b7c2a199-4c17-4ba6-b81d-751719d2dac6.jpg?aki_policy=large |
+| xl_picture_url | A definir | <class 'float'> | nan |
+| host_id | A definir | <class 'int'> | 1169 |
+| host_url | A definir | <class 'str'> | https://www.airbnb.com/users/show/1169 |
+| host_name | A definir | <class 'str'> | Holly |
+| host_since | A definir | <class 'str'> | 2008-07-31 |
+| host_location | A definir | <class 'str'> | San Francisco, California, United States |
+| host_about | A definir | <class 'str'> | We are a family with 2 boys born in 2009 and 2011.  We have a new puppy (Feb 2017) named Tucker who is part black lab and part border collie. |
+| host_response_time | A definir | <class 'str'> | within an hour |
+| host_response_rate | A definir | <class 'str'> | 100% |
+| host_acceptance_rate | A definir | <class 'float'> | nan |
+| host_is_superhost | A definir | <class 'str'> | t |
+| host_thumbnail_url | A definir | <class 'str'> | https://a0.muscache.com/im/pictures/efdad96a-3efc-4bc2-bdc9-f69740a5a818.jpg?aki_policy=profile_small |
+| host_picture_url | A definir | <class 'str'> | https://a0.muscache.com/im/pictures/efdad96a-3efc-4bc2-bdc9-f69740a5a818.jpg?aki_policy=profile_x_medium |
+| host_neighbourhood | A definir | <class 'str'> | Duboce Triangle |
+| host_listings_count | A definir | <class 'int'> | 1 |
+| host_total_listings_count | A definir | <class 'int'> | 1 |
+| host_verifications | A definir | <class 'str'> | ['email', 'phone', 'facebook', 'reviews', 'kba'] |
+| host_has_profile_pic | A definir | <class 'str'> | t |
+| host_identity_verified | A definir | <class 'str'> | t |
+| street | A definir | <class 'str'> | San Francisco, CA, United States |
+| neighbourhood | A definir | <class 'str'> | Duboce Triangle |
+| neighbourhood_cleansed | A definir | <class 'str'> | Western Addition |
+| neighbourhood_group_cleansed | A definir | <class 'float'> | nan |
+| city | A definir | <class 'str'> | San Francisco |
+| state | A definir | <class 'str'> | CA |
+| zipcode | A definir | <class 'int'> | 94117 |
+| market | A definir | <class 'str'> | San Francisco |
+| smart_location | A definir | <class 'str'> | San Francisco, CA |
+| country_code | A definir | <class 'str'> | US |
+| country | A definir | <class 'str'> | United States |
+| latitude | A definir | <class 'float'> | 37.76931 |
+| longitude | A definir | <class 'float'> | -122.43386 |
+| is_location_exact | A definir | <class 'str'> | t |
+| property_type | A definir | <class 'str'> | Apartment |
+| room_type | A definir | <class 'str'> | Entire home/apt |
+| accommodates | A definir | <class 'int'> | 3 |
+| bathrooms | A definir | <class 'float'> | 1.0 |
+| bedrooms | A definir | <class 'int'> | 1 |
+| beds | A definir | <class 'int'> | 2 |
+| bed_type | A definir | <class 'str'> | Real Bed |
+| amenities | A definir | <class 'str'> | {TV,"Cable TV",Internet,Wifi,Kitchen,"Pets live on this property",Dog(s),Heating,"Family/kid friendly",Washer,Dryer,"Smoke detector","Carbon monoxide detector","First aid kit",Essentials,Shampoo,"24-hour check-in",Hangers,"Hair dryer",Iron,"Laptop friendly workspace","Self check-in",Keypad,"Private entrance","Pack ’n Play/travel crib","Room-darkening shades"} |
+| square_feet | A definir | <class 'float'> | nan |
+| price | A definir | <class 'str'> | $170.00 |
+| weekly_price | A definir | <class 'str'> | $1,120.00 |
+| monthly_price | A definir | <class 'str'> | $4,200.00 |
+| security_deposit | A definir | <class 'str'> | $100.00 |
+| cleaning_fee | A definir | <class 'str'> | $100.00 |
+| guests_included | A definir | <class 'int'> | 2 |
+| extra_people | A definir | <class 'str'> | $25.00 |
+| minimum_nights | A definir | <class 'int'> | 1 |
+| maximum_nights | A definir | <class 'int'> | 30 |
+| minimum_minimum_nights | A definir | <class 'int'> | 1 |
+| maximum_minimum_nights | A definir | <class 'int'> | 1 |
+| minimum_maximum_nights | A definir | <class 'int'> | 30 |
+| maximum_maximum_nights | A definir | <class 'int'> | 30 |
+| minimum_nights_avg_ntm | A definir | <class 'float'> | 1.0 |
+| maximum_nights_avg_ntm | A definir | <class 'float'> | 30.0 |
+| calendar_updated | A definir | <class 'str'> | today |
+| has_availability | A definir | <class 'str'> | t |
+| availability_30 | A definir | <class 'int'> | 1 |
+| availability_60 | A definir | <class 'int'> | 1 |
+| availability_90 | A definir | <class 'int'> | 2 |
+| availability_365 | A definir | <class 'int'> | 64 |
+| calendar_last_scraped | A definir | <class 'str'> | 2019-03-06 |
+| number_of_reviews | A definir | <class 'int'> | 180 |
+| number_of_reviews_ltm | A definir | <class 'int'> | 52 |
+| first_review | A definir | <class 'str'> | 2009-07-23 |
+| last_review | A definir | <class 'str'> | 2019-02-17 |
+| review_scores_rating | A definir | <class 'int'> | 97 |
+| review_scores_accuracy | A definir | <class 'int'> | 10 |
+| review_scores_cleanliness | A definir | <class 'int'> | 10 |
+| review_scores_checkin | A definir | <class 'int'> | 10 |
+| review_scores_communication | A definir | <class 'int'> | 10 |
+| review_scores_location | A definir | <class 'int'> | 10 |
+| review_scores_value | A definir | <class 'int'> | 10 |
+| requires_license | A definir | <class 'str'> | t |
+| license | A definir | <class 'str'> | STR-0001256 |
+| jurisdiction_names | A definir | <class 'str'> | {"SAN FRANCISCO"} |
+| instant_bookable | A definir | <class 'str'> | t |
+| is_business_travel_ready | A definir | <class 'str'> | f |
+| cancellation_policy | A definir | <class 'str'> | moderate |
+| require_guest_profile_picture | A definir | <class 'str'> | f |
+| require_guest_phone_verification | A definir | <class 'str'> | f |
+| calculated_host_listings_count | A definir | <class 'int'> | 1 |
+| calculated_host_listings_count_entire_homes | A definir | <class 'int'> | 1 |
+| calculated_host_listings_count_private_rooms | A definir | <class 'int'> | 0 |
+| calculated_host_listings_count_shared_rooms | A definir | <class 'int'> | 0 |
+| reviews_per_month | A definir | <class 'float'> | 1.54 |
