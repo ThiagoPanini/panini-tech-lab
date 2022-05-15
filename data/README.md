@@ -22,6 +22,8 @@
   - [San Francisco Fire](#san-francisco-fire)
     - [Calls](#calls)
     - [Incidents](#incidents)
+  - [US Population](#us-population)
+  - [Web Logs](#web-logs)
 
 ___
 
@@ -37,6 +39,16 @@ Em complemento, este documento servirá como um grande guia para o detalhamento 
 | :---: | :---: | :---: | :---: |
 | [Activity Data](#activity-data) | JSON | 80 | 1,1 GB |
 | [Airbnb](#airbnb) | CSV | 1 | 32MB |
+| [Bike Data](#bike-data) | CSV | 2 | 42MB |
+| [Blogs](#blogs) | JSON | 1 | 1KB |
+| [Employee](#employee) | CSV | 4 | 2KB |
+| [Flights Data](#flights-data) | Diversos | 4 | 33MB |
+| [IOT Devices](#iot-devices) | JSON | 1 | 60MB |
+| [Loans](#loans) | PARQUET | 1 | 160KB |
+| [Retail Data](#retail-data) | CSV | 1 | 43MB |
+| [San Francisco Fire](#san-francisco-fire) | CSV | 2 | 54MB |
+| [US Population](#us-population) | JSON | 1 | 3MB |
+| [Web Logs](#web-logs) | LOG | 1 | 21MB |
 
 ___
 
@@ -463,65 +475,106 @@ ___
 | Coluna | Descrição | Tipo Primitivo | Exemplo |
 | :---: | :---: | :---: | :---: |
 | Incident Number | Número do incidente registrado | <class 'int'> | 16000003 |
-| Exposure Number | Índice de exposição do incidente | <class 'int'> | 0 |
+| Exposure Number | Indicador de exposição ao incidente | <class 'int'> | 0 |
 | Address | Endereço do incidente | <class 'str'> | Precita Av/florida Street |
-| Incident Date | Número de chamada | <class 'str'> | 01/01/2016 |
-| Call Number | Data e horário de acionamento do alarme | <class 'int'> | 160010015 |
-| Alarm DtTm | Data e horário da chegada da equipe | <class 'str'> | 01/01/2016 12:02:57 AM |
-| Arrival DtTm | Data e horário de fechamento do incidente | <class 'str'> | 01/01/2016 12:08:05 AM |
-| Close DtTm | Cidade do incidente | <class 'str'> | 01/01/2016 12:12:51 AM |
-| City | CEP do incidente | <class 'str'> | San Francisco |
-| Zipcode | Identificação do batalhão do incidente | <class 'int'> | 94110 |
-| Battalion | Área da estação relacionada ao incidente | <class 'str'> | B06 |
-| Station Area | Quadra relacionada ao incidente | <class 'int'> | 9 |
-| Box | Unidades de supressão utilizadas | <class 'int'> | 5621 |
-| Suppression Units | Unidades pessoais utilizadas | <class 'int'> | 1 |
-| Suppression Personnel | Unidades EMS utilizadas | <class 'int'> | 4 |
-| EMS Units | Unidades EMS pessoais utilizadas | <class 'int'> | 0 |
-| EMS Personnel | Outras unidades utilizadas | <class 'int'> | 0 |
-| Other Units | Outras unidades pessoais utilizadas | <class 'int'> | 0 |
-| Other Personnel | Primeira unidade no local do incidente | <class 'int'> | 0 |
-| First Unit On Scene | Estimativa de perdas (em metros quadrados) através do incidente | <class 'float'> | nan |
-| Estimated Property Loss | Estimativa de conteúdo perdido através do incidente | <class 'float'> | nan |
-| Estimated Contents Loss | Vítimas fatais de incêndio | <class 'float'> | nan |
-| Fire Fatalities | Vítimas do incêndio | <class 'int'> | 0 |
-| Fire Injuries | Vítimas fatais do incidente como um todo | <class 'int'> | 0 |
-| Civilian Fatalities | Vítimas do incidente como um todo | <class 'int'> | 0 |
-| Civilian Injuries | Número de alarmes acionados | <class 'int'> | 0 |
-| Number of Alarms | Descrição inicial da situação | <class 'float'> | nan |
-| Primary Situation | Ajuda mútua | <class 'str'> | 600 good intent call, other |
-| Mutual Aid | Ação primária tomada | <class 'str'> | n none |
-| Action Taken Primary | Ação secundária tomada | <class 'str'> | 86 investigate |
-| Action Taken Secondary | Outra ação tomada | <class 'float'> | nan |
-| Action Taken Other | Total de ocupantes alertados | <class 'float'> | nan |
-| Detector Alerted Occupants | Uso da propriedade | <class 'float'> | nan |
-| Property Use | Área de origem do incêndio | <class 'str'> | 962 residential street, road or residential driveway |
-| Area of Fire Origin | Causa do incêndio | <class 'float'> | nan |
-| Ignition Cause | Fator primário do incêndio | <class 'float'> | nan |
-| Ignition Factor Primary | Fator secundário do incêndio | <class 'float'> | nan |
-| Ignition Factor Secondary | Fonte de calor relacionada ao incêndio | <class 'float'> | nan |
-| Heat Source | Primeiro item a ser incendiado no contexto do incêndio | <class 'float'> | nan |
-| Item First Ignited | Fatores humanos associados ao incêndio | <class 'float'> | nan |
-| Human Factors Associated with Ignition | Tipo de estrutura relacionada ao incidente | <class 'float'> | nan |
-| Structure Type | Estado da estrutura afetada pelo incidente | <class 'float'> | nan |
-| Structure Status | Andar de origem do incêndio | <class 'float'> | nan |
-| Floor of Fire Origin | Flag que indica o ospalhamento do fogo | <class 'float'> | nan |
-| Fire Spread | Flag que indica que o fogo não se alastrou | <class 'float'> | nan |
-| No Flame Spead | Número de andares com danos mínimos | <class 'str'> | na |
-| Number of floors with minimum damage | Número de andares com danos significativos | <class 'float'> | nan |
-| Number of floors with significant damage | Número de andares com danos críticos | <class 'float'> | nan |
-| Number of floors with heavy damage | Número de andares com danos extremos | <class 'float'> | nan |
-| Number of floors with extreme damage | Flag que indica a presença de um detector de incêndios | <class 'float'> | nan |
-| Detectors Present | Tipo do detector de incêndios | <class 'float'> | nan |
-| Detector Type | Operação do detector de incêndios | <class 'float'> | nan |
-| Detector Operation | Efetividade do detector de incêndios | <class 'float'> | nan |
-| Detector Effectiveness | Motivo relacionado a falha no detector de incêndios | <class 'float'> | nan |
-| Detector Failure Reason | Flag de presença de sistema automático de combate a incêndio | <class 'float'> | nan |
-| Automatic Extinguishing System Present | Tipo de sistema automático de combate a incêndio | <class 'float'> | nan |
-| Automatic Extinguishing Sytem Type | Performance do sistema automático de combate a incêndio | <class 'float'> | nan |
-| Automatic Extinguishing Sytem Perfomance | Motivo relacionado a falha no sistema automático de combate a incêndio | <class 'float'> | nan |
-| Automatic Extinguishing Sytem Failure Reason | Número de aspersores em atividade | <class 'float'> | nan |
-| Number of Sprinkler Heads Operating | Distrito de supervisão do local do incidente | <class 'float'> | nan |
-| Supervisor District | Vizinhança do local do incidente | <class 'int'> | 9 |
-| Neighborhood  District | Localização do incidente (latitude e longitude) | <class 'str'> | Bernal Heights |
-| Location | A Definir | <class 'str'> | (37.7475540000296, -122.409572) |
+| Incident Date | Data do incidente | <class 'str'> | 01/01/2016 |
+| Call Number | Número de chamada | <class 'int'> | 160010015 |
+| Alarm DtTm | Data e horário de acionamento do alarme | <class 'str'> | 01/01/2016 12:02:57 AM |
+| Arrival DtTm | Data e horário da chegada da equipe | <class 'str'> | 01/01/2016 12:08:05 AM |
+| Close DtTm | Data e horário de fechamento do incidente | <class 'str'> | 01/01/2016 12:12:51 AM |
+| City | Cidade do incidente | <class 'str'> | San Francisco |
+| Zipcode | CEP do incidente | <class 'int'> | 94110 |
+| Battalion | Identificação do batalhão do incidente | <class 'str'> | B06 |
+| Station Area | Área da estação relacionada ao incidente | <class 'int'> | 9 |
+| Box | Quadra relacionada ao incidente | <class 'int'> | 5621 |
+| Suppression Units | Unidades de supressão utilizadas | <class 'int'> | 1 |
+| Suppression Personnel | Unidades pessoais utilizadas | <class 'int'> | 4 |
+| EMS Units | Unidades EMS utilizadas | <class 'int'> | 0 |
+| EMS Personnel | Unidades EMS pessoais utilizadas | <class 'int'> | 0 |
+| Other Units | Outras unidades utilizadas | <class 'int'> | 0 |
+| Other Personnel | Outras unidades pessoais utilizadas | <class 'int'> | 0 |
+| First Unit On Scene | Primeira unidade no local do incidente | <class 'float'> | nan |
+| Estimated Property Loss | Estimativa de perdas (em metros quadrados) através do incidente | <class 'float'> | nan |
+| Estimated Contents Loss | Estimativa de conteúdo perdido através do incidente | <class 'float'> | nan |
+| Fire Fatalities | Vítimas fatais de incêndio | <class 'int'> | 0 |
+| Fire Injuries | Vítimas do incêndio | <class 'int'> | 0 |
+| Civilian Fatalities | Vítimas fatais do incidente como um todo | <class 'int'> | 0 |
+| Civilian Injuries | Vítimas do incidente como um todo | <class 'int'> | 0 |
+| Number of Alarms | Número de alarmes acionados | <class 'float'> | nan |
+| Primary Situation | Descrição inicial da situação | <class 'str'> | 600 good intent call, other |
+| Mutual Aid | Ajuda mútua | <class 'str'> | n none |
+| Action Taken Primary | Ação primária tomada | <class 'str'> | 86 investigate |
+| Action Taken Secondary | Ação secundária tomada | <class 'float'> | nan |
+| Action Taken Other | Outra ação tomada | <class 'float'> | nan |
+| Detector Alerted Occupants | Total de ocupantes alertados | <class 'float'> | nan |
+| Property Use | Uso da propriedade | <class 'str'> | 962 residential street, road or residential driveway |
+| Area of Fire Origin | Área de origem do incêndio | <class 'float'> | nan |
+| Ignition Cause | Causa do incêndio | <class 'float'> | nan |
+| Ignition Factor Primary | Fator primário do incêndio | <class 'float'> | nan |
+| Ignition Factor Secondary | Fator secundário do incêndio | <class 'float'> | nan |
+| Heat Source | Fonte de calor relacionada ao incêndio | <class 'float'> | nan |
+| Item First Ignited | Primeiro item a ser incendiado no contexto do incêndio | <class 'float'> | nan |
+| Human Factors Associated with Ignition | Fatores humanos associados ao incêndio | <class 'float'> | nan |
+| Structure Type | Tipo de estrutura relacionada ao incidente | <class 'float'> | nan |
+| Structure Status | Estado da estrutura afetada pelo incidente | <class 'float'> | nan |
+| Floor of Fire Origin | Andar de origem do incêndio | <class 'float'> | nan |
+| Fire Spread | Flag que indica o ospalhamento do fogo | <class 'float'> | nan |
+| No Flame Spead | Flag que indica que o fogo não se alastrou | <class 'str'> | na |
+| Number of floors with minimum damage | Número de andares com danos mínimos | <class 'float'> | nan |
+| Number of floors with significant damage | Número de andares com danos significativos | <class 'float'> | nan |
+| Number of floors with heavy damage | Número de andares com danos críticos | <class 'float'> | nan |
+| Number of floors with extreme damage | Número de andares com danos extremos | <class 'float'> | nan |
+| Detectors Present | Flag que indica a presença de um detector de incêndios | <class 'float'> | nan |
+| Detector Type | Tipo do detector de incêndios | <class 'float'> | nan |
+| Detector Operation | Operação do detector de incêndios | <class 'float'> | nan |
+| Detector Effectiveness | Efetividade do detector de incêndios | <class 'float'> | nan |
+| Detector Failure Reason | Motivo relacionado a falha no detector de incêndios | <class 'float'> | nan |
+| Automatic Extinguishing System Present | Flag de presença de sistema automático de combate a incêndio | <class 'float'> | nan |
+| Automatic Extinguishing Sytem Type | Tipo de sistema automático de combate a incêndio | <class 'float'> | nan |
+| Automatic Extinguishing Sytem Perfomance | Performance do sistema automático de combate a incêndio | <class 'float'> | nan |
+| Automatic Extinguishing Sytem Failure Reason | Motivo relacionado a falha no sistema automático de combate a incêndio | <class 'float'> | nan |
+| Number of Sprinkler Heads Operating | Número de aspersores em atividade | <class 'float'> | nan |
+| Supervisor District | Distrito de supervisão do local do incidente | <class 'int'> | 9 |
+| Neighborhood  District | Vizinhança do local do incidente | <class 'str'> | Bernal Heights |
+| Location | Localização do incidente (latitude e longitude) | <class 'str'> | (37.7475540000296, -122.409572) |
+
+___
+
+### US Population
+
+> Dados demográficos relacionados a população dos Estados Unidos, incluindo, como principal atributo, a população de cada cidade/CEP.
+
+- 📌 **Acesso:** [data/us-population](https://github.com/ThiagoPanini/panini-tech-lab/tree/main/data/us-population)
+- 🎲 **Formato dos dados:** JSON
+- 📂 **Quantidade de arquivos:** 1
+- 📦 **Volume total aproximado:** 3MB
+- 🌎 **Origem:** Fonte dos dados ainda a ser levantada
+
+| Coluna | Descrição | Tipo Primitivo | Exemplo |
+| :---: | :---: | :---: | :---: |
+| zipcode | CEP | <class 'str'> | 01001 |
+| city | Cidade | <class: 'str'> | AGAWAM |
+| loc | Localização (latitude e longitude) | <class: 'list'> | [ -72.622739, 42.070206 ] |
+| pop | População | <class 'int'> | 15338 |
+| state | Estado | <class 'str' > | MA |
+
+___
+
+### Web Logs
+
+> Dados fictícios gerados a partir de requisições em servidores web. Os logs são elementos fundamentais de análise em requisições e respostas em um contexto de envio e retorno de dados.
+
+- 📌 **Acesso:** [data/us-population](https://github.com/ThiagoPanini/panini-tech-lab/tree/main/data/web-logs)
+- 🎲 **Formato dos dados:** LOG
+- 📂 **Quantidade de arquivos:** 1
+- 📦 **Volume total aproximado:** 21MB
+- 🌎 **Origem:** Fonte dos dados ainda a ser levantada
+
+Os metadados dessa base de dados poderão ser melhor analisados observando diretamente o arquivo disponibilizado. De toda forma, os atributos do arquivo de log giram em torno das seguintes características:
+
+- IP de origem
+- Data e horário da requisição
+- *Start line* da requisição (incluindo método, caminho de pesquisa e versão HTTP)
+- *Status code* da resposta
+- *Header* da requisição/resposta
+   
