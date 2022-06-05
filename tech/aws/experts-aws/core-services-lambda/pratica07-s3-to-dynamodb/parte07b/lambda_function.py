@@ -1,0 +1,160 @@
+# Importando bibliotecas
+from shutil import ExecError
+import boto3
+import json
+import logging
+from utils.log import log_config
+
+# Configurando logger da função
+logger = logging.getLogger('lambda_logger')
+logger = log_config(logger, flag_stream_handler=False)
+
+# Definindo variáveis para configuração da tabela no DynamoDB (em caso de criação)
+TABLE_NAME = 'rock-albuns'
+PARTITION_KEY = 'banda'
+SORT_KEY = 'album'
+KEY_SCHEMA = [
+    {
+        'AttributeName': PARTITION_KEY,
+        'KeyType': 'HASH'
+    },
+    {
+        'AttributeName': SORT_KEY,
+        'KeyType': 'RANGE'
+    }
+]
+ATTRIBUTE_DEF = [
+    {
+        'AttributeName': PARTITION_KEY,
+        'AttributeType': 'S'
+    },
+    {
+        'AttributeName': SORT_KEY,
+        'AttributeType': 'S'
+    }
+]
+PROVISIONED_THROUGHPUT = {
+    'ReadCapacityUnits': 10,
+    'WriteCapacityUnits': 10
+}
+
+# Definindo função handler
+def lambda_handler(event, context):
+    
+    # Listando tabelas do dynamodb
+    dynamodb = boto3.resource('dynamodb')
+    logger.debug(f'Listando tabelas existentes no DynamoDB')
+    try:
+        tables = [table.name for table in dynamodb.tables.all()]
+    except Exception as e:
+        logger.error(f'Erro ao listar tabelas do DynamoDB via boto3 client. Exception: {e}')
+        raise e
+    
+    # Validando existência da tabela rock-albuns e criando
+    if TABLE_NAME not in tables:
+        logger.debug(f'Tabela {TABLE_NAME} não existente no DynamoDB. Iniciando processo de criação')
+        try:
+            table = dynamodb.create_table(
+                TableName=TABLE_NAME,
+                KeySchema=KEY_SCHEMA,
+                AttributeDefinitions=ATTRIBUTE_DEF,
+                ProvisionedThroughput=PROVISIONED_THROUGHPUT
+            )
+            logger.debug(f'Status da tabela {table.name}: {table.table_status}')
+            logger.debug(f'Aguardando a completude da criação da tabela {table.name}')
+            table.meta.client.get_waiter('table_exists').wait(TableName=TABLE_NAME)
+            table = dynamodb.Table(TABLE_NAME)
+            logger.info(f'Status atualizado da tabela {table.name}: {table.table_status}')
+        except Exception as e:
+            logger.error(f'Erro ao criar tabela {TABLE_NAME} no DynamoDB. Exception: {e}')
+            raise e
+    else:
+        # Tabela já existe no dynamodb
+        table = dynamodb.Table(TABLE_NAME)
+        logger.info(f'Tabela {TABLE_NAME} existe e será considerada como alvo das inserções de itens')
+    
+    # Criando variáveis de controle para processo de ingestão
+    error_count = 0
+    error_threshold = 2
+    flag_threshold = False
+    put_item_verbose = 1
+    error_items = []
+    status_code = 200
+
+    # Iterando sobre elementos do JSON aninhado
+    for line in event:
+        try:
+            # Inserindo registro na tabela do DynamoDB
+            response = table.put_item(Item=line)
+            if put_item_verbose == 1:
+                logger.info(f'Registro {line} inserido com sucesso na tabela')
+        
+        except Exception as e:
+            # Inserindo registro com falha em lista para posterior debugging
+            error_count += 1
+            error_items.append(line)
+
+            # Comunicando erro ao usuário (se aplicável)
+            if put_item_verbose == 1:
+                logger.warning(f'Erro ao inserir registro {line} na tabela {TABLE_NAME} do DynamoDB. Exception: {e}')
+            
+            # Contabilizando erro e validando limite de erros estabelecido 
+            if error_count >= error_threshold:
+                logger.error(f'Quantidade máxima de erros alcançada ({error_count}). Encerrando processo de escrita de itens')
+                flag_threshold = True
+                break
+            else:
+                # Caso o limite não tenha sido atingido, passar para próximo item do laço
+                pass
+    
+    # Validando resultado
+    if error_count == 0 and not flag_threshold:
+        logger.info(f'Todos os {len(event)} registros foram inseridos com sucesso na tabela do DynamoDB')
+        status_code = 200
+    elif error_count > 0 and flag_threshold:
+        pass
+    else:
+        logger.warning(f'Foram inseridos {len(event) - error_count} registros com sucesso e {error_count} com falhas')
+        status_code = 417
+
+    return {
+        'status_code': status_code,
+        'body': f'Registros inseridos com sucesso: {len(event) - error_count}. Registros inseridos com falha: {error_count}' 
+    }
+
+"""
+---------------------------------------------------
+------------ BLOCO DE TESTES DA FUNÇÃO ------------
+     Configurando eventos e testando execução
+---------------------------------------------------
+"""
+
+event = [
+  {
+    "banda": "Pink Floyd",
+    "album": "The Dark Side of the Moon",
+    "ano": "1973",
+    "nota": "10"
+  },
+  {
+    "banda": "Guns N Roses",
+    "album": "Appetite for Destruction",
+    "ano": "1987",
+    "nota": "10"
+  },
+  {
+    "banda": "Dream Theater",
+    "album": "A Dramatic Turn of Events",
+    "ano": "2011",
+    "nota": "10"
+  },
+  {
+    "banda": "Pearl Jam",
+    "album": "Ten",
+    "ano": "1991",
+    "nota": "10"
+  }
+]
+
+if __name__ == '__main__':
+    lambda_handler(event, None)
