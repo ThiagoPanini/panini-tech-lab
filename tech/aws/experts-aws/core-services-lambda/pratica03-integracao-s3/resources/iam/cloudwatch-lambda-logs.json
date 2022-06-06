@@ -5,7 +5,7 @@
             "Sid": "CloudWatchCreateLogGroup",
             "Effect": "Allow",
             "Action": "logs:CreateLogGroup",
-            "Resource": "arn:aws:logs:sa-east-1:596533897380:*"
+            "Resource": "arn:aws:logs:sa-east-1:<id>:*"
         },
         {
             "Sid": "CloudWatchWriteLogs",
@@ -14,7 +14,7 @@
                 "logs:CreateLogStream",
                 "logs:PutLogEvents"
             ],
-            "Resource": "arn:aws:logs:sa-east-1:596533897380:log-group:/aws/lambda/*:*"
+            "Resource": "arn:aws:logs:sa-east-1:<id>:log-group:/aws/lambda/*:*"
         }
     ]
 }
