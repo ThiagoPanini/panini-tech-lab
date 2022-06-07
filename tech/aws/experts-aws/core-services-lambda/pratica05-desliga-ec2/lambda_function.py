@@ -3,10 +3,11 @@ import boto3
 import json
 import logging
 from utils.log import log_config
+import os
 
 # Configurando log
 logger = logging.getLogger('lambda_logger')
-logger = log_config(logger)
+logger = log_config(logger, flag_stream_handler=True)
 
 # Definindo função handler
 def lambda_handler(event, context):
@@ -57,3 +58,23 @@ def lambda_handler(event, context):
         'statusCode': 200,
         'body': stopped_instances
     }
+
+
+"""
+---------------------------------------------------
+------------ BLOCO DE TESTES DA FUNÇÃO ------------
+     Configurando eventos e testando execução
+---------------------------------------------------
+"""
+
+# Definindo variáveis para leitura de evento de teste
+LAMBDA_PATH = os.path.join(os.getcwd(), 'tech/aws/experts-aws/core-services-lambda')
+FUNCTION_REF = 'pratica05-desliga-ec2'
+EVENT_PATH = 'resources/tests/test-event.json'
+
+# Lendo evento de teste
+with open(os.path.join(LAMBDA_PATH, FUNCTION_REF, EVENT_PATH)) as f:
+    event = json.load(f)
+
+if __name__ == '__main__':
+    lambda_handler(event=event, context=None)
