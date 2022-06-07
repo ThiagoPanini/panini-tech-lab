@@ -1,13 +1,13 @@
 # Importando bibliotecas
-from shutil import ExecError
 import boto3
-import json
 import logging
 from utils.log import log_config
+import json
+import os
 
-# Configurando logger da função
+# Instanciando objeto de logging
 logger = logging.getLogger('lambda_logger')
-logger = log_config(logger, flag_stream_handler=False)
+logger = log_config(logger, flag_stream_handler=True)
 
 # Definindo variáveis para configuração da tabela no DynamoDB (em caso de criação)
 TABLE_NAME = 'rock-albuns'
@@ -40,7 +40,29 @@ PROVISIONED_THROUGHPUT = {
 
 # Definindo função handler
 def lambda_handler(event, context):
+
+    # Criando variáveis através do evento recebido como parâmetro
+    logger.debug(f'Extraindo informações do evento de put no s3')
+    try:
+        s3_info = event['Records'][0]['s3']
+        bucket_name = s3_info['bucket']['name']
+        obj_key = s3_info['object']['key']
+        logger.info(f'Evento de inserção no s3 a ser tratado nesta função Lambda: {bucket_name}/{obj_key}')
+    except Exception as e:
+        logger.error(f'Erro ao extrair informações de evento na função. Exception: {e}')
+        raise e
     
+    # Instanciando client s3
+    s3_client = boto3.client('s3')
+
+    logger.debug(f'Lendo objeto {obj_key}')
+    try:
+        response = s3_client.get_object(Bucket=bucket_name, Key=obj_key)
+        json_data = json.loads(response['Body'].read().decode('utf-8'))
+    except Exception as e:
+        logger.error(f'Erro ao realizar a leitura de objeto JSON. Exception: {e}')
+        raise e
+
     # Listando tabelas do dynamodb
     dynamodb = boto3.resource('dynamodb')
     logger.debug(f'Listando tabelas existentes no DynamoDB')
@@ -49,7 +71,7 @@ def lambda_handler(event, context):
     except Exception as e:
         logger.error(f'Erro ao listar tabelas do DynamoDB via boto3 client. Exception: {e}')
         raise e
-    
+
     # Validando existência da tabela rock-albuns e criando
     if TABLE_NAME not in tables:
         logger.debug(f'Tabela {TABLE_NAME} não existente no DynamoDB. Iniciando processo de criação')
@@ -82,7 +104,7 @@ def lambda_handler(event, context):
     status_code = 200
 
     # Iterando sobre elementos do JSON aninhado
-    for line in event:
+    for line in json_data:
         try:
             # Inserindo registro na tabela do DynamoDB
             response = table.put_item(Item=line)
@@ -109,18 +131,19 @@ def lambda_handler(event, context):
     
     # Validando resultado
     if error_count == 0 and not flag_threshold:
-        logger.info(f'Todos os {len(event)} registros foram inseridos com sucesso na tabela do DynamoDB')
+        logger.info(f'Todos os {len(json_data)} registros foram inseridos com sucesso na tabela do DynamoDB')
         status_code = 200
     elif error_count > 0 and flag_threshold:
         pass
     else:
-        logger.warning(f'Foram inseridos {len(event) - error_count} registros com sucesso e {error_count} com falhas')
+        logger.warning(f'Foram inseridos {len(json_data) - error_count} registros com sucesso e {error_count} com falhas')
         status_code = 417
 
     return {
         'status_code': status_code,
-        'body': f'Registros inseridos com sucesso: {len(event) - error_count}. Registros inseridos com falha: {error_count}' 
+        'body': json_data
     }
+    
 
 """
 ---------------------------------------------------
@@ -129,32 +152,14 @@ def lambda_handler(event, context):
 ---------------------------------------------------
 """
 
-event = [
-  {
-    "banda": "Pink Floyd",
-    "album": "The Dark Side of the Moon",
-    "ano": "1973",
-    "nota": "10"
-  },
-  {
-    "banda": "Guns N Roses",
-    "album": "Appetite for Destruction",
-    "ano": "1987",
-    "nota": "10"
-  },
-  {
-    "banda": "Dream Theater",
-    "album": "A Dramatic Turn of Events",
-    "ano": "2011",
-    "nota": "10"
-  },
-  {
-    "banda": "Pearl Jam",
-    "album": "Ten",
-    "ano": "1991",
-    "nota": "10"
-  }
-]
+# Definindo variáveis para leitura de evento de teste
+LAMBDA_PATH = os.path.join(os.getcwd(), 'tech/aws/experts-aws/core-services-lambda')
+FUNCTION_REF = 'pratica07-s3-to-dynamodb'
+EVENT_PATH = 'resources/tests/test-event.json'
+
+# Lendo evento de teste
+with open(os.path.join(LAMBDA_PATH, FUNCTION_REF, EVENT_PATH)) as f:
+    event = json.load(f)
 
 if __name__ == '__main__':
-    lambda_handler(event, None)
+    lambda_handler(event=event, context=None)
