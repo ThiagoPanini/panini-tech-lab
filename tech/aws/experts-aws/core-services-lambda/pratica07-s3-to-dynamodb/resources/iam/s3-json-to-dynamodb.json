@@ -21,7 +21,7 @@
             "Sid": "DynamoDBPutItem",
             "Effect": "Allow",
             "Action": "dynamodb:PutItem",
-            "Resource": "arn:aws:dynamodb:sa-east-1:596533897380:table/rock-albuns"
+            "Resource": "arn:aws:dynamodb:sa-east-1:<account_id>:table/rock-albuns"
         }
     ]
 }
