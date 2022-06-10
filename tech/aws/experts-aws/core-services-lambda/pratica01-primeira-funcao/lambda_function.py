@@ -30,6 +30,4 @@ with open(os.path.join(LAMBDA_PATH, FUNCTION_REF, EVENT_PATH)) as f:
     event = json.load(f)
 
 if __name__ == '__main__':
-    print(os.getcwd())
-    print(os.listdir())
     lambda_handler(event=event, context=None)
