@@ -21,7 +21,7 @@ def lambda_handler(event, context):
         regions = [r['RegionName'] for r in regions_info]
     except Exception as e:
         logger.error(f'Erro ao listar regiões AWS. Exception: {e}')
-        exit()
+        raise e
         
     # Iterando sobre as regiões
     logger.debug(f'Iterando sobre as {len(regions)} regiões AWS em busca de volumes EBS não vinculados')

@@ -23,7 +23,7 @@ def lambda_handler(event, context):
         logger.info(f'Foram obtidas {len(regions)} regiões no processo de listagem')
     except Exception as e:
         logger.error(f'Erro ao listar regiões. Exception: {e}')
-        exit()
+        raise e
         
     # Iterando sobre cada região da AWS e inicializando um recurso específico para cada
     logger.debug(f'Iniciando processo de interação para encerramento de instâncias')
