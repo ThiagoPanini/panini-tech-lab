@@ -1,0 +1,15 @@
+{
+  "type": "records",
+  "namespace": "expertsAWS",
+  "name": "lambda",
+  "fields": [
+    {
+      "name": "id",
+      "type": "int"
+    },
+    {
+      "name": "category",
+      "type": "string"
+    }
+  ]
+}
