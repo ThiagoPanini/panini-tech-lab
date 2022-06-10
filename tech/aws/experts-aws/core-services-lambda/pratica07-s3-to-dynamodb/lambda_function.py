@@ -108,7 +108,7 @@ def lambda_handler(event, context):
         try:
             # Inserindo registro na tabela do DynamoDB
             response = table.put_item(Item=line)
-            if put_item_verbose == 1:
+            if put_item_verbose > 0:
                 logger.info(f'Registro {line} inserido com sucesso na tabela')
         
         except Exception as e:
@@ -117,7 +117,7 @@ def lambda_handler(event, context):
             error_items.append(line)
 
             # Comunicando erro ao usuário (se aplicável)
-            if put_item_verbose == 1:
+            if put_item_verbose > 0:
                 logger.warning(f'Erro ao inserir registro {line} na tabela {TABLE_NAME} do DynamoDB. Exception: {e}')
             
             # Contabilizando erro e validando limite de erros estabelecido 
