@@ -31,15 +31,41 @@ Table of Contents
 ---------------------------------------------------
 """
 
-# Importando bibliotecas
-from base64 import encode
-import requests
-from bs4 import BeautifulSoup
+# Bibliotecas padrão
 import os
 import json
 
+# Leitura de argumentos de sript
+import argparse
+
+# Requisições e parsing de html
+import requests
+from bs4 import BeautifulSoup
+
 # Logging
 import logging
+
+
+"""
+---------------------------------------------------
+------------ 1. CONFIGURAÇÕES INICIAIS ------------
+        1.2 Parsing de argumentos do script
+---------------------------------------------------
+"""
+
+# Criando parser
+parser = argparse.ArgumentParser()
+
+# Adicionando argumentos
+parser.add_argument('--online', '-o', required=False, default=True, type=bool,
+                    help='Execução online de requisição ou leitura local de arquivo json')
+parser.add_argument('--num-pages', '-n', required=False, default=5, type=int,
+                    help='Número total de páginas a serem extraídas nas requisições online')
+parser.add_argument('--page-log', '-l', required=False, default=5, type=int)
+parser.add_argument('--file-path', '-p', required=False, default=os.path.expanduser('~'), type=str)
+parser.add_argument('--file-name', '-f', required=False, default='rock_albuns_complete.json', type=str)
+
+args = parser.parse_args()
 
 
 """
@@ -107,11 +133,11 @@ logger = log_config(logger, flag_stream_handler=True)
 
 # Definindo variáveis do projeto
 BASE_URL = 'https://dr.loudness-war.info/album/list/'
-PAGES = 6000
+PAGES = args.num_pages
 HEADERS = ['banda', 'album', 'ano']
-PAGE_LOG = 100
-FILE_PATH = os.path.join(os.getcwd(), 'tech\\aws\\experts-aws\\core-services-lambda\\pratica08-gatilho-sqs\\resources\\files')
-FILE_NAME = 'rock_albuns_complete.json'
+PAGE_LOG = args.page_log
+FILE_PATH = args.file_path
+FILE_NAME = args.file_name
 
 
 """
