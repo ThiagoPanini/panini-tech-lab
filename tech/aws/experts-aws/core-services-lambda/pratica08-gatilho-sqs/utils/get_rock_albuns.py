@@ -212,7 +212,7 @@ def get_rock_albuns(online=True, base_url=BASE_URL, pages=PAGES, headers=HEADERS
             # Coletando conteúdo html e aplicando tratamento
             logger.debug(f'Realizando requisição para a página {page} do site. Total de registros coletados: {len(rock_albuns)}') if log_condition else None
             html_content = requests.get(url=request_url)
-            soup = BeautifulSoup(html_content.text, 'lxml')
+            soup = BeautifulSoup(html_content.text, features='html.parser')
 
             # Extraindo tabelas do site
             site_tables = soup.find_all('table')
