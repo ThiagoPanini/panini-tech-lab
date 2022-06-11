@@ -63,13 +63,15 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--request-mode', '-r', required=False, default='online', type=str)
 parser.add_argument('--page-start', '-ps', required=False, default=1, type=int)
 parser.add_argument('--page-end', '-pe', required=False, default=20, type=int)                    
-parser.add_argument('--page-log', '-pl', required=False, default=5, type=int)
+parser.add_argument('--log-step', '-l', required=False, default=5, type=int)
 parser.add_argument('--save-mode', '-s', required=False, default='interval')
 parser.add_argument('--output', '-o', required=False, default='local', type=str)
 parser.add_argument('--file-path', '-p', required=False, default=os.path.expanduser('~'), type=str)
 parser.add_argument('--local-file', '-f', required=False, type=str)
-parser.add_argument('--s3-bucket', '-b', required=False, type=str)
-parser.add_argument('--s3-key', '-k', required=False, type=str)
+parser.add_argument('--num-objects', '-n', required=False, default=-1, type=int)
+parser.add_argument('--s3-bucket', '-s3b', required=False, type=str)
+parser.add_argument('--s3-prefix', '-s3p', required=False, type=str)
+parser.add_argument('--destination', '-d', required=False, default='s3', type=str)
 
 args = parser.parse_args()
 
@@ -145,16 +147,18 @@ FILE_NAME = 'rock_albuns_scrapping.json'
 REQUEST_MODE = args.request_mode
 PAGE_START = args.page_start
 PAGE_END = args.page_end
-PAGE_LOG = args.page_log
+LOG_STEP = args.log_step
 SAVE_PARAMS = {
     'save_mode': args.save_mode,
     'output': args.output,
     'file_path': args.file_path,
+    's3_bucket': args.s3_bucket,
+    's3_prefix': args.s3_prefix
 }
-
-# Definindo variáveis do arquivo de saída no s3
 BUCKET = args.s3_bucket
-KEY = args.s3_key
+PREFIX = args.s3_prefix
+NUM_OBJS = args.num_objects
+DEST = args.destination
 
 
 """
@@ -176,13 +180,17 @@ def save_rock_albuns(data, file_name, save_params):
     elif save_params['output'] == 's3':
         s3_client = boto3.client('s3')
         try:
-            response = s3_client.put_object(Bucket=BUCKET, Key=KEY, Body=json.dumps(data, ensure_ascii=False))
+            response = s3_client.put_object(
+                Bucket=save_params['s3_bucket'], 
+                Key=save_params['s3_prefix'] + file_name, 
+                Body=json.dumps(data, ensure_ascii=False)
+            )
         except Exception as e:
             raise e
 
 
 # Obtenção de dados de álbuns de rock (online ou local)
-def get_rock_albuns(request_mode, page_start, page_end, page_log, 
+def get_rock_albuns(request_mode, page_start, page_end, log_step, 
                     save_params=SAVE_PARAMS):
     """
     Função responsável por realizar a obtenção de dados relacionados a álbuns de rock
@@ -233,9 +241,6 @@ def get_rock_albuns(request_mode, page_start, page_end, page_log,
         [type: str, default=rock_albuns_complete.json]
     """
 
-    # Extraindo parâmetros de salvamento dos dados
-    file_path = save_params['file_path']
-
     # Validando modo de obtenção dos dados
     if request_mode == 'online':
         # Iterando sobre as páginas do site
@@ -245,7 +250,7 @@ def get_rock_albuns(request_mode, page_start, page_end, page_log,
         for page in range(page_start, page_end + 1):
             # Gerando url de requisição de acordo com a página
             request_url = BASE_URL + str(page)
-            log_condition = (page_log > 0) and (page % page_log == 0)
+            log_condition = (log_step > 0) and (page % log_step == 0)
 
             # Coletando conteúdo html e aplicando tratamento
             logger.debug(f'Realizando requisição para a página {page} do site. Total de registros coletados: {len(rock_albuns)}') if log_condition else None
@@ -279,11 +284,12 @@ def get_rock_albuns(request_mode, page_start, page_end, page_log,
 
                 # Removendo arquivo anterior
                 try:
-                    old_filename = f'{os.path.splitext(FILE_NAME)[0]}_pg{page_start}-{page - page_log}.json'
+                    old_filename = f'{os.path.splitext(FILE_NAME)[0]}_pg{page_start}-{page - log_step}.json'
                     os.remove(os.path.join(save_params['file_path'], old_filename))
                 except FileNotFoundError as fe:
                     pass
-
+            
+            # Incrementando índice auxiliar
             i += 1
 
         # Comunicação final ao usuário
@@ -295,7 +301,7 @@ def get_rock_albuns(request_mode, page_start, page_end, page_log,
         try:
             with open(args.local_file, 'rb') as f:
                 rock_albuns = json.loads(f.read().decode('utf-8'))
-            logger.info(f'Conteúdo de arquivo JSON lido com sucesso. Total de registros: {len(rock_albuns)}')
+            logger.info(f'Conteúdo de arquivo JSON lido com sucesso')
         except Exception as e:
             logger.error(f'Erro ao realizar a leitura do arquivo JSON. Exception: {e}')
             raise e
@@ -303,6 +309,37 @@ def get_rock_albuns(request_mode, page_start, page_end, page_log,
     # Retorno do conteúdo
     return rock_albuns
 
+# Definindo função para inserção iterativa no s3
+def rock_data_to_s3(nested_json, bucket_name, bucket_prefix, num_objs):
+
+    # Transformando json em lista em caso de json único no arquivo
+    nested_json = [nested_json] if type(nested_json) != list else nested_json
+    
+    # Comunicando o total de iterações no laço
+    total_objs = len(nested_json)
+    if NUM_OBJS == -1:
+        logger.debug(f'Realizando o PUT para todos os {total_objs} objetos JSON do arquivo consolidado')
+    else:
+        logger.debug(f'Iterando sobre {NUM_OBJS} dos {total_objs} objetos JSON do arquivo consolidado')
+
+    # Iterando sobre cada registro e escrevendo no s3
+    s3_client = boto3.client('s3')
+    for album in nested_json[:NUM_OBJS]:
+        # Condição de logging
+        idx = nested_json.index(album) + 1
+        log_condition = (LOG_STEP > 0) and (idx % LOG_STEP == 0)
+        idx_name = str(idx).zfill(len(str(total_objs)))
+
+        # Comunicando
+        logger.debug(f'Realizando o PUT para o objeto {idx} do JSON aninhado') if log_condition else None
+        
+        # Inserindo objeto no bucket
+        obj_key = f'{PREFIX}rock_album_{idx_name}.json'
+        try:
+            response = s3_client.put_object(Bucket=BUCKET, Key=obj_key, Body=json.dumps(album))        
+        except Exception as e:
+            logger.warning(f'Erro ao realizar o PUT para o objeto {obj_key}. Exception: {e}')
+            raise e
 
 """
 ---------------------------------------------------
@@ -317,10 +354,29 @@ if __name__ == '__main__':
         request_mode=REQUEST_MODE,
         page_start=PAGE_START,
         page_end=PAGE_END,
-        page_log=PAGE_LOG,
+        log_step=LOG_STEP,
         save_params=SAVE_PARAMS
     )
 
-    # Iterando sobre cada registro
-    for album in rock_albuns_data[:2]:
-        print(album)
+    # Inserindo dados no s3
+    if DEST == 's3':
+        rock_data_to_s3(
+            nested_json=rock_albuns_data,
+            bucket_name=BUCKET,
+            bucket_prefix=PREFIX,
+            num_objs=NUM_OBJS
+        )
+    elif DEST == 'sqs':
+        # TODO
+        pass
+
+    # Validando quantidade de itens no dynamodb
+    dynamodb_client = boto3.client('dynamodb')
+    response = dynamodb_client.scan(TableName='rock-albuns', Select='COUNT')
+    total_itens = response['Count']
+
+    # Comunicando usuário
+    if total_itens == NUM_OBJS:
+        logger.info(f'A tabela rock-albuns do DynamoDB possui todos os {total_itens} solicitados')
+    else:
+        logger.warning(f'Foi solicitada a escrita de {NUM_OBJS} objetos JSON, porém a tabela rock-albuns do DynamoDB possui {total_itens} itens')
