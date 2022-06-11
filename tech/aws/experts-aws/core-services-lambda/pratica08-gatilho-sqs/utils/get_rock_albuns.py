@@ -32,11 +32,14 @@ Table of Contents
 """
 
 # Bibliotecas padrão
+from dataclasses import dataclass
 import os
 import json
+import boto3
 
 # Leitura de argumentos de sript
 import argparse
+from numpy import save
 
 # Requisições e parsing de html
 import requests
@@ -57,13 +60,16 @@ import logging
 parser = argparse.ArgumentParser()
 
 # Adicionando argumentos
-parser.add_argument('--online', '-o', required=False, default=True, type=bool,
-                    help='Execução online de requisição ou leitura local de arquivo json')
-parser.add_argument('--num-pages', '-n', required=False, default=5, type=int,
-                    help='Número total de páginas a serem extraídas nas requisições online')
-parser.add_argument('--page-log', '-l', required=False, default=5, type=int)
+parser.add_argument('--request-mode', '-r', required=False, default='online', type=str)
+parser.add_argument('--page-start', '-ps', required=False, default=1, type=int)
+parser.add_argument('--page-end', '-pe', required=False, default=20, type=int)                    
+parser.add_argument('--page-log', '-pl', required=False, default=5, type=int)
+parser.add_argument('--save-mode', '-s', required=False, default='interval')
+parser.add_argument('--output', '-o', required=False, default='local', type=str)
 parser.add_argument('--file-path', '-p', required=False, default=os.path.expanduser('~'), type=str)
-parser.add_argument('--file-name', '-f', required=False, default='rock_albuns_complete.json', type=str)
+parser.add_argument('--local-file', '-f', required=False, type=str)
+parser.add_argument('--s3-bucket', '-b', required=False, type=str)
+parser.add_argument('--s3-key', '-k', required=False, type=str)
 
 args = parser.parse_args()
 
@@ -130,14 +136,25 @@ def log_config(logger, level=logging.DEBUG,
 logger = logging.getLogger(__file__)
 logger = log_config(logger, flag_stream_handler=True)
 
-
 # Definindo variáveis do projeto
 BASE_URL = 'https://dr.loudness-war.info/album/list/'
-PAGES = args.num_pages
 HEADERS = ['banda', 'album', 'ano']
+FILE_NAME = 'rock_albuns_scrapping.json'
+
+# Coletando argumentos do script (parâmetros da função)
+REQUEST_MODE = args.request_mode
+PAGE_START = args.page_start
+PAGE_END = args.page_end
 PAGE_LOG = args.page_log
-FILE_PATH = args.file_path
-FILE_NAME = args.file_name
+SAVE_PARAMS = {
+    'save_mode': args.save_mode,
+    'output': args.output,
+    'file_path': args.file_path,
+}
+
+# Definindo variáveis do arquivo de saída no s3
+BUCKET = args.s3_bucket
+KEY = args.s3_key
 
 
 """
@@ -147,9 +164,26 @@ FILE_NAME = args.file_name
 ---------------------------------------------------
 """
 
+# Salvando dados no s3
+def save_rock_albuns(data, file_name, save_params):
+
+    # Validando salvamento local dos dados
+    if save_params['output'] == 'local':
+        with open(os.path.join(save_params['file_path'], file_name), 'w', encoding='utf-8') as f:
+            f.write(json.dumps(data, ensure_ascii=False))
+    
+    # Validando salvamento em bucket s3 na AWS
+    elif save_params['output'] == 's3':
+        s3_client = boto3.client('s3')
+        try:
+            response = s3_client.put_object(Bucket=BUCKET, Key=KEY, Body=json.dumps(data, ensure_ascii=False))
+        except Exception as e:
+            raise e
+
+
 # Obtenção de dados de álbuns de rock (online ou local)
-def get_rock_albuns(online=True, base_url=BASE_URL, pages=PAGES, headers=HEADERS, 
-                    page_log=PAGE_LOG, **kwargs):
+def get_rock_albuns(request_mode, page_start, page_end, page_log, 
+                    save_params=SAVE_PARAMS):
     """
     Função responsável por realizar a obtenção de dados relacionados a álbuns de rock
     a serem utilizados como alvo de posteriores análises e integrações envolvendo
@@ -199,15 +233,19 @@ def get_rock_albuns(online=True, base_url=BASE_URL, pages=PAGES, headers=HEADERS
         [type: str, default=rock_albuns_complete.json]
     """
 
+    # Extraindo parâmetros de salvamento dos dados
+    file_path = save_params['file_path']
+
     # Validando modo de obtenção dos dados
-    if online:
+    if request_mode == 'online':
         # Iterando sobre as páginas do site
-        logger.info(f'Modo online: iterando sobre um total de {PAGES} páginas do site')
+        logger.info(f'Modo online: iterando da página {page_start} até a página {page_end} do site')
         rock_albuns = []
-        for page in range(1, PAGES + 1):
+        i = 0
+        for page in range(page_start, page_end + 1):
             # Gerando url de requisição de acordo com a página
             request_url = BASE_URL + str(page)
-            log_condition = (PAGE_LOG > 0) and (page % PAGE_LOG == 0)
+            log_condition = (page_log > 0) and (page % page_log == 0)
 
             # Coletando conteúdo html e aplicando tratamento
             logger.debug(f'Realizando requisição para a página {page} do site. Total de registros coletados: {len(rock_albuns)}') if log_condition else None
@@ -227,25 +265,35 @@ def get_rock_albuns(online=True, base_url=BASE_URL, pages=PAGES, headers=HEADERS
                 json_content = {h: v for h, v in zip(HEADERS, content)}
                 rock_albuns.append(json_content)
 
+                # Salvando dados arquivo a arquivo (se aplicável)
+                save_rock_albuns(data=json_content, file_name=FILE_NAME, save_params=save_params) if save_params['save_mode'] == 'file' else None
+
+            # Salvando dados página a página (se aplicável)
+            file_name = f'{os.path.splitext(FILE_NAME)[0]}_pg{page}.json'
+            save_rock_albuns(data=rock_albuns, file_name=file_name, save_params=save_params) if save_params['save_mode'] == 'page' else None
+
+            # Salvando dados página a página (se aplicável)
+            if save_params['save_mode'] == 'interval' and log_condition and i > 0:
+                file_name = f'{os.path.splitext(FILE_NAME)[0]}_pg{page_start}-{page}.json'
+                save_rock_albuns(data=rock_albuns, file_name=file_name, save_params=save_params)
+
+                # Removendo arquivo anterior
+                try:
+                    old_filename = f'{os.path.splitext(FILE_NAME)[0]}_pg{page_start}-{page - page_log}.json'
+                    os.remove(os.path.join(save_params['file_path'], old_filename))
+                except FileNotFoundError as fe:
+                    pass
+
+            i += 1
+
         # Comunicação final ao usuário
         logger.info(f'Foram extraídos {len(rock_albuns)} registros de álbuns de rock')
 
-        # Verificando salvamento de arquivo
-        if kwargs['save']:
-            file_path = kwargs['file_path'] if 'file_path' in kwargs else FILE_PATH
-            file_name = kwargs['file_name'] if 'file_name' in kwargs else FILE_NAME
-            with open(os.path.join(file_path, file_name), 'w', encoding='utf-8') as f:
-                f.write(json.dumps(rock_albuns, ensure_ascii=False))
-
     else:
-        # Modo batch: a leitura dos dados será realizada através de arquivo local
-        logger.info(f'Modo batch: realizando a leitura local de arquivo JSON contendo álbuns de rock')
-        file_path = kwargs['file_path'] if 'file_path' in kwargs else FILE_PATH
-        file_name = kwargs['file_name'] if 'file_name' in kwargs else FILE_NAME
-
-        # Realizando a leitura do arquivo
+        # Modo local: a leitura dos dados será realizada através de arquivo local
+        logger.info(f'Modo local: realizando a leitura local de arquivo JSON contendo álbuns de rock')
         try:
-            with open(os.path.join(file_path, file_name), 'rb') as f:
+            with open(args.local_file, 'rb') as f:
                 rock_albuns = json.loads(f.read().decode('utf-8'))
             logger.info(f'Conteúdo de arquivo JSON lido com sucesso. Total de registros: {len(rock_albuns)}')
         except Exception as e:
@@ -264,4 +312,15 @@ def get_rock_albuns(online=True, base_url=BASE_URL, pages=PAGES, headers=HEADERS
 """
 
 if __name__ == '__main__':
-    rock_albuns_data = get_rock_albuns(online=True, save=True)
+    # Coletando dados
+    rock_albuns_data = get_rock_albuns(
+        request_mode=REQUEST_MODE,
+        page_start=PAGE_START,
+        page_end=PAGE_END,
+        page_log=PAGE_LOG,
+        save_params=SAVE_PARAMS
+    )
+
+    # Iterando sobre cada registro
+    for album in rock_albuns_data[:2]:
+        print(album)
