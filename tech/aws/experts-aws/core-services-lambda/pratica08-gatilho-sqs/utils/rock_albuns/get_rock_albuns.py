@@ -36,6 +36,7 @@ from dataclasses import dataclass
 import os
 import json
 import boto3
+from time import sleep
 
 # Leitura de argumentos de sript
 import argparse
@@ -168,7 +169,7 @@ DEST = args.destination
 ---------------------------------------------------
 """
 
-# Salvando dados no s3
+# Salvando dados extraídos
 def save_rock_albuns(data, file_name, save_params):
 
     # Validando salvamento local dos dados
@@ -187,7 +188,6 @@ def save_rock_albuns(data, file_name, save_params):
             )
         except Exception as e:
             raise e
-
 
 # Obtenção de dados de álbuns de rock (online ou local)
 def get_rock_albuns(request_mode, page_start, page_end, log_step, 
@@ -341,6 +341,22 @@ def rock_data_to_s3(nested_json, bucket_name, bucket_prefix, num_objs):
             logger.warning(f'Erro ao realizar o PUT para o objeto {obj_key}. Exception: {e}')
             raise e
 
+# Definindo função para validação dos itens no DynamoDB
+def validate_dynamodb_items(num_objs):
+    # Validando quantidade de itens no dynamodb
+    logger.debug('Validando itens presentes no DynamoDB')
+    sleep(5)
+    dynamodb_client = boto3.client('dynamodb')
+    response = dynamodb_client.scan(TableName='rock-albuns', Select='COUNT')
+    total_itens = response['Count']
+
+    # Comunicando usuário
+    if total_itens == num_objs:
+        logger.info(f'A tabela rock-albuns do DynamoDB possui todos os {total_itens} solicitados')
+    else:
+        logger.warning(f'Foi solicitada a escrita de {num_objs} objetos JSON, porém a tabela rock-albuns do DynamoDB possui {total_itens} itens')
+
+
 """
 ---------------------------------------------------
 ----------- 2. WEB SCRAPPING DE ÁLBUNS ------------
@@ -370,13 +386,5 @@ if __name__ == '__main__':
         # TODO
         pass
 
-    # Validando quantidade de itens no dynamodb
-    dynamodb_client = boto3.client('dynamodb')
-    response = dynamodb_client.scan(TableName='rock-albuns', Select='COUNT')
-    total_itens = response['Count']
-
-    # Comunicando usuário
-    if total_itens == NUM_OBJS:
-        logger.info(f'A tabela rock-albuns do DynamoDB possui todos os {total_itens} solicitados')
-    else:
-        logger.warning(f'Foi solicitada a escrita de {NUM_OBJS} objetos JSON, porém a tabela rock-albuns do DynamoDB possui {total_itens} itens')
+    # Validando itens no DynamoDB
+    validate_dynamodb_items(num_objs=NUM_OBJS)
