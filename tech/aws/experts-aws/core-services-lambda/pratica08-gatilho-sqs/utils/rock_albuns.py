@@ -40,6 +40,7 @@ from time import sleep
 
 # Leitura de argumentos de sript
 import argparse
+from pandas import Interval
 
 # Requisições e parsing de html
 import requests
@@ -64,16 +65,17 @@ parser = argparse.ArgumentParser()
 DEFAULT_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'rock_albuns_scrapping_pg1-6000.json')
 
 # Adicionando argumentos
-parser.add_argument('--mode', '-m', required=False, default='check', type=str) # procurar como restringir argumentos
+parser.add_argument('--mode', '-m', required=False, default='put', type=str) # procurar como restringir argumentos
 parser.add_argument('--page-start', '-s', required=False, default=1, type=int)
 parser.add_argument('--page-end', '-e', required=False, default=20, type=int)                    
 parser.add_argument('--log-step', '-l', required=False, default=5, type=int)
 parser.add_argument('--file', '-f', required=False,  default=DEFAULT_FILE, type=str)
-parser.add_argument('--destination', '-d', required=False, default='s3', type=str)
+parser.add_argument('--destination', '-d', required=False, default='sqs', type=str)
 parser.add_argument('--num-objects', '-n', required=False, default=10, type=int)
 parser.add_argument('--bucket', '-b', required=False, type=str)
 parser.add_argument('--prefix', '-p', required=False, default='', type=str)
 parser.add_argument('--queue-name', '-q', required=False, default='rock-albuns-messages', type=str)
+parser.add_argument('--interval', '-i', required=False, default=0.1, type=float)
 parser.add_argument('--table', '-t', required=False, default='rock-albuns', type=str)
 
 args = parser.parse_args()
@@ -101,6 +103,7 @@ DESTINATION = args.destination
 S3_BUCKET = args.bucket
 S3_PREFIX = args.prefix
 SQS_QUEUE = args.queue_name
+SQS_INTERVAL = args.interval
 DYNAMODB_TABLE = args.table
 
 # Validando argumentos de acordo com o cenário
@@ -226,7 +229,7 @@ class ManageRockAlbuns():
         # Comunicando o total de iterações no laço
         total_objs = len(nested_json)
         if n_objs == -1:
-            logger.debug(f'Realizando o PUT para todos os {total_objs} objetos JSON do arquivo consolidado com mensagens de log a cada {self.log_step} chamadas')
+            logger.debug(f'Realizando o PUT no s3 para todos os {total_objs} objetos JSON do arquivo consolidado com mensagens de log a cada {self.log_step} chamadas')
         else:
             logger.debug(f'Iterando sobre {n_objs} dos {total_objs} objetos JSON do arquivo consolidado com mensagens de log a cada {self.log_step} chamadas')
 
@@ -251,7 +254,7 @@ class ManageRockAlbuns():
         logger.info(f'Processo de inserção no s3 finalizado com sucesso')
 
 
-    def rock_data_to_sqs(self):
+    def rock_data_to_sqs(self, queue, nested_json, n_objs, interval):
         """
         """
 
@@ -260,7 +263,29 @@ class ManageRockAlbuns():
         response = sqs.get_queue_url(QueueName=SQS_QUEUE)
         queue_url = response['QueueUrl']
 
-        print(queue_url)
+        # Comunicando o total de iterações no laço
+        total_objs = len(nested_json)
+        if n_objs == -1:
+            logger.debug(f'Enviando todos os {total_objs} objetos JSON para fila SQS com logs a cada {self.log_step} chamadas')
+        else:
+            logger.debug(f'Enviando {n_objs} dos {total_objs} objetos JSON para fila SQS com logs a cada {self.log_step} chamadas')
+
+        # Iterando sobre objetos JSON e enviando-os pra fila
+        for album in nested_json[:n_objs]:
+
+            # Enviando mensagem para a fila
+            logger.debug(f'Enviando mensagem {album}')
+            try:
+                response = sqs.send_message(
+                    QueueUrl=queue_url,
+                    MessageBody=json.dumps(album, ensure_ascii=False)
+                )
+            except Exception as e:
+                logger.warning(f'Erro ao enviar mensagem: {album}. Exception: {e}')
+                pass
+
+            # Intervalo de envio
+            sleep(interval)
 
 
     def count_dynamodb_items(self, table):
@@ -278,7 +303,6 @@ class ManageRockAlbuns():
         logger.info(f'A tabela {table} do DynamoDB possui {total_itens} itens')
         
         return total_itens
-
        
 
 """
@@ -287,14 +311,15 @@ Ideias:
     - [x] Método para salvar dados localmente
     - [x] Método para carregar dados localmente
     - [x] Método para inserir dados no s3
-    - [ ] Método para inserir dados no sqs
-    - [ ] Método para gerenciar put dos dados (s3 ou sqs)
+    - [x] Método para inserir dados no sqs
+    - [x] Método para gerenciar put dos dados (s3 ou sqs)
     - [x] Método para validar dados no dynamodb
 
     - Script para escolher caminhos conforme inputs
 
     1. Webscrapping -> Salvar dados
-    2. Leitura dados -> Carga no s3/sqs > Valida dynamodb
+    2. Leitura dados -> Carga no s3/sqs
+    3. Valida dynamodb
 
 """
 
@@ -345,7 +370,7 @@ if __name__ == '__main__':
 
         * Exemplos de execução de script:
         python3 rock_albuns.py --mode "put" --file "./rock_albuns_scrapping_pg1-6000.json" --destination "s3" --bucket "aws-experts-dx6sdjz2j7ro-sa-east-1" --prefix "lambda/output/" --num-objects 10 --log-step 1
-        python3 rock_albuns.py --mode "put" --file "./rock_albuns_scrapping_pg1-6000.json" --destination "sqs" --queue-name "rock-albuns-messages"
+        python3 rock_albuns.py --mode "put" --file "./rock_albuns_scrapping_pg1-6000.json" --destination "sqs" --queue-name "rock-albuns-messages" --num-objects 5 --interval 0.1
 
     ------------------------------------------------------
 
@@ -388,7 +413,12 @@ if __name__ == '__main__':
                 n_objs=N_OBJS
             )
         elif DESTINATION == 'sqs':
-            pass
+            rock.rock_data_to_sqs(
+                queue=SQS_QUEUE,
+                nested_json=rock_albuns,
+                n_objs=N_OBJS,
+                interval=SQS_INTERVAL
+            )
 
     elif MODE == 'check':
         # Retornando itens inseridos no DynamoDB
