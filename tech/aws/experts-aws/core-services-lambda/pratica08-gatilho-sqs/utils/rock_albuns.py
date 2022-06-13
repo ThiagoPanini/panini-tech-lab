@@ -73,6 +73,7 @@ parser.add_argument('--destination', '-d', required=False, default='s3', type=st
 parser.add_argument('--num-objects', '-n', required=False, default=10, type=int)
 parser.add_argument('--bucket', '-b', required=False, type=str)
 parser.add_argument('--prefix', '-p', required=False, default='', type=str)
+parser.add_argument('--queue-name', '-q', required=False, default='rock-albuns-messages', type=str)
 parser.add_argument('--table', '-t', required=False, default='rock-albuns', type=str)
 
 args = parser.parse_args()
@@ -99,6 +100,7 @@ N_OBJS = args.num_objects
 DESTINATION = args.destination
 S3_BUCKET = args.bucket
 S3_PREFIX = args.prefix
+SQS_QUEUE = args.queue_name
 DYNAMODB_TABLE = args.table
 
 # Validando argumentos de acordo com o cenário
@@ -250,7 +252,15 @@ class ManageRockAlbuns():
 
 
     def rock_data_to_sqs(self):
-        pass
+        """
+        """
+
+        # Instanciando client do sqs e coletando url da fila
+        sqs = boto3.client('sqs')
+        response = sqs.get_queue_url(QueueName=SQS_QUEUE)
+        queue_url = response['QueueUrl']
+
+        print(queue_url)
 
 
     def count_dynamodb_items(self, table):
@@ -334,8 +344,8 @@ if __name__ == '__main__':
         --prefix e --queue
 
         * Exemplos de execução de script:
-        python3 rock_albuns.py --mode "put" --file "./rock_albuns_scrapping_pg1-6000.json" --destination "s3" --bucket "aws-experts-dx6sdjz2j7ro-sa-east-1" --prefix "lambda/teste/" --num-objects 5 --log-step 1
-        python3 rock_albuns.py --mode "put" --file "./rock_albuns_scrapping_pg1-6000.json" --destination "sqs" --queue
+        python3 rock_albuns.py --mode "put" --file "./rock_albuns_scrapping_pg1-6000.json" --destination "s3" --bucket "aws-experts-dx6sdjz2j7ro-sa-east-1" --prefix "lambda/output/" --num-objects 10 --log-step 1
+        python3 rock_albuns.py --mode "put" --file "./rock_albuns_scrapping_pg1-6000.json" --destination "sqs" --queue-name "rock-albuns-messages"
 
     ------------------------------------------------------
 
