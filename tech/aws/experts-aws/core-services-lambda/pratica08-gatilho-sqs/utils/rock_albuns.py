@@ -32,6 +32,7 @@ Table of Contents
 """
 
 # Bibliotecas padrão
+from distutils.sysconfig import PREFIX
 import os
 import json
 import boto3
@@ -59,11 +60,19 @@ from log import log_config
 # Criando parser
 parser = argparse.ArgumentParser()
 
+# Valores default para argumentos
+DEFAULT_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'rock_albuns_scrapping_pg1-6000.json')
+
 # Adicionando argumentos
-parser.add_argument('--mode', '-m', required=False, default='get', type=str) # procurar como restringir argumentos
+parser.add_argument('--mode', '-m', required=False, default='put', type=str) # procurar como restringir argumentos
 parser.add_argument('--page-start', '-s', required=False, default=1, type=int)
 parser.add_argument('--page-end', '-e', required=False, default=20, type=int)                    
 parser.add_argument('--log-step', '-l', required=False, default=5, type=int)
+parser.add_argument('--file', '-f', required=False,  default=DEFAULT_FILE, type=str)
+parser.add_argument('--destination', '-d', required=False, default='s3', type=str)
+parser.add_argument('--num-objects', '-n', required=False, default=10, type=int)
+parser.add_argument('--bucket', '-b', required=False, type=str)
+parser.add_argument('--prefix', '-p', required=False, default='', type=str)
 
 args = parser.parse_args()
 
@@ -84,6 +93,14 @@ MODE = args.mode
 PAGE_START = args.page_start
 PAGE_END = args.page_end
 LOG_STEP = args.log_step
+LOCAL_FILE = args.file
+N_OBJS = args.num_objects
+DESTINATION = args.destination
+S3_BUCKET = args.bucket
+S3_PREFIX = args.prefix
+
+# Validando argumentos de acordo com o cenário
+S3_BUCKET = 'aws-experts-dx6sdjz2j7ro-sa-east-1' if S3_BUCKET is None else S3_BUCKET
 
 # Configurando objeto logger
 logger = logging.getLogger(__file__)
@@ -99,7 +116,8 @@ logger = log_config(logger, flag_stream_handler=True)
 
 class ManageRockAlbuns():
 
-    def __init__(self):
+    def __init__(self, log_step=5):
+        self.log_step = log_step
         pass
     
     def save_local_data(self, data, file_path, file_name):
@@ -115,12 +133,12 @@ class ManageRockAlbuns():
         try:
             with open(data_path, 'w', encoding='utf-8') as f:
                 f.write(json.dumps(data, ensure_ascii=False))
-            logger.info(f'Arquivo {file_name} salvo com sucesso em {file_path}')
+            logger.info(f'Arquivo salvo com sucesso em {data_path}')
         except Exception as e:
             logger.error(f'Erro ao salvar arquivo em {data_path}. Exception: {e}')
     
     
-    def load_local_data(self, data, file_path, file_name):
+    def load_local_data(self, file_path, file_name):
         """
         """
 
@@ -129,10 +147,11 @@ class ManageRockAlbuns():
             data_path = os.path.join(file_path, file_name)
             with open(data_path, 'rb') as f:
                 rock_albuns = json.loads(f.read().decode('utf-8'))
-            logger.info(f'Arquivo {file_name} lido com sucesso')
+            logger.info(f'Arquivo {file_name} lido com sucesso contendo {len(rock_albuns)} objetos')
         except Exception as e:
             logger.error(f'Erro ao realizar a leitura do arquivo {file_name} do caminho {file_path}. Exception: {e}')
-
+            raise e
+        
         return rock_albuns
 
 
@@ -143,7 +162,7 @@ class ManageRockAlbuns():
 
         # Informações sobre o processo
         logger.debug(f'Iniciando processo de webscrapping de álbuns de rock no site {base_url}')
-        logger.info(f'Extração da página {page_start} até a página {page_end} com mensagens de log a cada {log_step} páginas')
+        logger.info(f'Extração da página {page_start} até a página {page_end} com mensagens de log a cada {self.log_step} páginas')
 
         # Criando variáveis de controle
         rock_albuns = []
@@ -158,7 +177,7 @@ class ManageRockAlbuns():
         for page in range(page_start, page_end + 1):
             # Gerando url de requisição e flag de log
             request_url = base_url + str(page)
-            log_condition = (log_step > 0) and (page % log_step == 0)
+            log_condition = (self.log_step > 0) and (page % self.log_step == 0)
 
             # Coletando conteúdo html e transformando via BeautifulSoup
             logger.debug(f'Realizando requisição para a página {page}. Objetos extraídos até o momento: {len(rock_albuns)}') if log_condition else None
@@ -193,45 +212,50 @@ class ManageRockAlbuns():
         self.save_local_data(data=rock_albuns, file_path=file_path, file_name=file_name)
 
 
-    def rock_data_to_s3(self, bucket, key, body, n_objs):
+    def rock_data_to_s3(self, bucket, prefix, nested_json, n_objs):
         """
         """
 
         # Transformando json aninhado (caso necessário)
-        body = [body] if type(body) != list else body
+        nested_json = [nested_json] if type(nested_json) != list else nested_json
         
         # Comunicando o total de iterações no laço
         total_objs = len(nested_json)
-        if NUM_OBJS == -1:
-            logger.debug(f'Realizando o PUT para todos os {total_objs} objetos JSON do arquivo consolidado')
+        if n_objs == -1:
+            logger.debug(f'Realizando o PUT para todos os {total_objs} objetos JSON do arquivo consolidado com mensagens de log a cada {self.log_step} chamadas')
         else:
-            logger.debug(f'Iterando sobre {NUM_OBJS} dos {total_objs} objetos JSON do arquivo consolidado')
+            logger.debug(f'Iterando sobre {n_objs} dos {total_objs} objetos JSON do arquivo consolidado com mensagens de log a cada {self.log_step} chamadas')
 
         # Iterando sobre cada registro e escrevendo no s3
         s3_client = boto3.client('s3')
-        for album in nested_json[:NUM_OBJS]:
+        for album in nested_json[:n_objs]:
             # Condição de logging
             idx = nested_json.index(album) + 1
-            log_condition = (LOG_STEP > 0) and (idx % LOG_STEP == 0)
+            log_condition = (self.log_step > 0) and (idx % self.log_step == 0)
             idx_name = str(idx).zfill(len(str(total_objs)))
 
-            # Comunicando
-            logger.debug(f'Realizando o PUT para o objeto {idx} do JSON aninhado') if log_condition else None
-            
             # Inserindo objeto no bucket
-            obj_key = f'{PREFIX}rock_album_{idx_name}.json'
+            logger.debug(f'Realizando o PUT para o objeto {idx} do JSON aninhado') if log_condition else None
+            file_name = f'rock_album_{idx_name}.json'
+            obj_key = prefix + file_name
             try:
-                response = s3_client.put_object(Bucket=BUCKET, Key=obj_key, Body=json.dumps(album))        
+                response = s3_client.put_object(Bucket=bucket, Key=obj_key, Body=json.dumps(album))        
             except Exception as e:
                 logger.warning(f'Erro ao realizar o PUT para o objeto {obj_key}. Exception: {e}')
                 raise e
+
+        logger.info(f'Processo de inserção no s3 finalizado com sucesso')
+
+
+    def rock_data_to_sqs(self):
+        pass
 
 """
 Ideias:
     - [x] Método para webscrapping
     - [x] Método para salvar dados localmente
     - [x] Método para carregar dados localmente
-    - [ ] Método para inserir dados no s3
+    - [x] Método para inserir dados no s3
     - [ ] Método para inserir dados no sqs
     - [ ] Método para gerenciar put dos dados (s3 ou sqs)
     - [ ] Método para validar dados no dynamodb
@@ -256,9 +280,29 @@ if __name__ == '__main__':
     
     # Verificando requisição dos dados de álbuns de rock
     if MODE == 'get':
-        rock.web_scrapping(
+        rock_albuns = rock.web_scrapping(
             page_end=PAGE_END,
             page_start=PAGE_START,
             log_step=LOG_STEP
         )
+
+    elif MODE == 'put':
+        # Coletando arquivo json aninhado
+        rock_albuns = rock.load_local_data(
+            file_path=os.path.dirname(LOCAL_FILE),
+            file_name=os.path.basename(LOCAL_FILE)
+        )
+
+        # Iterando sobre seu conteúdo
+        if DESTINATION == 's3':
+            rock.rock_data_to_s3(
+                bucket=S3_BUCKET,
+                prefix=S3_PREFIX,
+                nested_json=rock_albuns,
+                n_objs=N_OBJS
+            )
+        elif DESTINATION == 'sqs':
+            pass
+
+
 
