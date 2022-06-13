@@ -32,7 +32,6 @@ Table of Contents
 """
 
 # Bibliotecas padrão
-from distutils.sysconfig import PREFIX
 import os
 import json
 import boto3
@@ -40,7 +39,6 @@ from time import sleep
 
 # Leitura de argumentos de sript
 import argparse
-from pandas import Interval
 
 # Requisições e parsing de html
 import requests
