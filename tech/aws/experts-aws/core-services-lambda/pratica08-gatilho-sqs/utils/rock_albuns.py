@@ -64,7 +64,7 @@ parser = argparse.ArgumentParser()
 DEFAULT_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'rock_albuns_scrapping_pg1-6000.json')
 
 # Adicionando argumentos
-parser.add_argument('--mode', '-m', required=False, default='put', type=str) # procurar como restringir argumentos
+parser.add_argument('--mode', '-m', required=False, default='check', type=str) # procurar como restringir argumentos
 parser.add_argument('--page-start', '-s', required=False, default=1, type=int)
 parser.add_argument('--page-end', '-e', required=False, default=20, type=int)                    
 parser.add_argument('--log-step', '-l', required=False, default=5, type=int)
@@ -73,6 +73,7 @@ parser.add_argument('--destination', '-d', required=False, default='s3', type=st
 parser.add_argument('--num-objects', '-n', required=False, default=10, type=int)
 parser.add_argument('--bucket', '-b', required=False, type=str)
 parser.add_argument('--prefix', '-p', required=False, default='', type=str)
+parser.add_argument('--table', '-t', required=False, default='rock-albuns', type=str)
 
 args = parser.parse_args()
 
@@ -98,6 +99,7 @@ N_OBJS = args.num_objects
 DESTINATION = args.destination
 S3_BUCKET = args.bucket
 S3_PREFIX = args.prefix
+DYNAMODB_TABLE = args.table
 
 # Validando argumentos de acordo com o cenário
 S3_BUCKET = 'aws-experts-dx6sdjz2j7ro-sa-east-1' if S3_BUCKET is None else S3_BUCKET
@@ -250,6 +252,25 @@ class ManageRockAlbuns():
     def rock_data_to_sqs(self):
         pass
 
+
+    def count_dynamodb_items(self, table):
+        """
+        """
+
+        # Validando quantidade de itens no dynamodb
+        logger.debug(f'Validando itens presentes na tabela {table} do DynamoDB')
+        sleep(5)
+        dynamodb_client = boto3.client('dynamodb')
+        response = dynamodb_client.scan(TableName=table, Select='COUNT')
+        total_itens = response['Count']
+
+        # Comunicando
+        logger.info(f'A tabela {table} do DynamoDB possui {total_itens} itens')
+        
+        return total_itens
+
+       
+
 """
 Ideias:
     - [x] Método para webscrapping
@@ -258,7 +279,7 @@ Ideias:
     - [x] Método para inserir dados no s3
     - [ ] Método para inserir dados no sqs
     - [ ] Método para gerenciar put dos dados (s3 ou sqs)
-    - [ ] Método para validar dados no dynamodb
+    - [x] Método para validar dados no dynamodb
 
     - Script para escolher caminhos conforme inputs
 
@@ -275,10 +296,65 @@ Ideias:
 """ 
 
 if __name__ == '__main__':
-    # Inicializando objeto da classe
-    rock = ManageRockAlbuns()
+    """
+    O módulo main deste script é responsável por aplicar
+    e gerenciar toda a lógica de execução baseada nas
+    diferentes possibilidades mapeadas pelo usuário. 
+    Contendo três principais modos (get, put e check),
+    os métodos da classe ManageRockAlbuns são executados
+    de acordo com os inputs fornecidos pelo usuário de
+    modo a proporcionar os outputs solicitados. 
+    Em detalhes, temos:
+
+    --mode = "get"
+        Este modo pode ser executado quando há a intenção
+        de aplicar o processo de webscrapping para 
+        obtenção de dados relacionados a álbuns de rock
+        direto da fonte. Este modo possui configurações
+        próprias que, quando parametrizadas, agem de 
+        modo a resultar em um arquivo JSON com o conteúdo
+        solicitado. 
+        
+        * Parâmetros necessários neste modo:
+        --page-start, --page-end e --log-step
+        
+        * Exemplo de execução de script:
+        python3 rock_albuns.py --mode "get" --page-start 1 --page-end 10 --log-step 5
     
-    # Verificando requisição dos dados de álbuns de rock
+    ------------------------------------------------------
+
+    --mode = "put"
+        Este modo considera a leitura de um arquivo JSON
+        salvo localmente (output do modo "get") para
+        envio iterativo à um bucket s3 ou à uma fila 
+        do sqs. 
+        
+        * Parâmetros necessários neste modo:
+        --file, --destination, --num-objects, --bucket
+        --prefix e --queue
+
+        * Exemplos de execução de script:
+        python3 rock_albuns.py --mode "put" --file "./rock_albuns_scrapping_pg1-6000.json" --destination "s3" --bucket "aws-experts-dx6sdjz2j7ro-sa-east-1" --prefix "lambda/teste/" --num-objects 5 --log-step 1
+        python3 rock_albuns.py --mode "put" --file "./rock_albuns_scrapping_pg1-6000.json" --destination "sqs" --queue
+
+    ------------------------------------------------------
+
+    --mode = "check"
+        Por fim, como a lógica final envolve a inserção
+        de itens no dynamodb, este modo tem como objetivo
+        a realização da contagem de itens na tabela alvo.
+        
+        * Parâmetros necessários neste modo:
+        --table
+
+        * Exemplo de execução de script
+        python3 rock_albuns.py --mode "check" --table "rock-albuns"
+    """
+
+    # Inicializando objeto da classe
+    rock = ManageRockAlbuns(log_step=LOG_STEP)
+    
+    # Validando modos
     if MODE == 'get':
         rock_albuns = rock.web_scrapping(
             page_end=PAGE_END,
@@ -304,5 +380,8 @@ if __name__ == '__main__':
         elif DESTINATION == 'sqs':
             pass
 
-
-
+    elif MODE == 'check':
+        # Retornando itens inseridos no DynamoDB
+        table_items = rock.count_dynamodb_items(
+            table=DYNAMODB_TABLE
+        )
