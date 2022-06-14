@@ -29,23 +29,23 @@ def lambda_handler(event, context):
 
     # Coletando objeto de fila via recurso sqs
     queue = sqs.get_queue_by_name(QueueName=QUEUE_NAME)
-    logger.debug(f'Número aproximado de mensagens na fila: {queue.attributes.get("ApproximateNumberOfMessages")}')
-
+    messages = event['Records']
+    logger.debug(f'Mensagens coletadas por evento: {len(messages)}')
+    
     # Iterando sobre chunck de mensagens
-    for message in queue.receive_messages(MaxNumberOfMessages=int(MAX_QUEUE_MSGS)):
-        logger.info(f'Mensagem {message.message_id} coletada: {message.body}')
-
+    for message in messages:
+        # Coletando parâmetros do evento
+        message_id = message['messageId']
+        message_body = message['body']
+        
         # Escrevendo no dynamodb
         table = dynamodb.Table(DYNAMODB_TABLE)
         try:
-            response = table.put_item(Item=json.loads(message.body))
-            logger.info(f'Mensagem {message.message_id} inserida com sucesso na tabela {DYNAMODB_TABLE} do DynamoDB')
-        
-            # Deletando mensagem
-            message.delete()
+            response = table.put_item(Item=json.loads(message_body))
+            logger.info(f'Mensagem {message_id} - {message_body} inserida com sucesso na tabela {DYNAMODB_TABLE} do DynamoDB')   
         except Exception as e:
-            logger.error(f'Erro ao inserir mensagem {message.message_id} na tabela {DYNAMODB_TABLE} do DynamoDB. Exception: {e}')
-            raise e            
+            logger.error(f'Erro ao inserir mensagem {message_body} na tabela {DYNAMODB_TABLE} do DynamoDB. Exception: {e}')
+            raise e
 
 
 """
