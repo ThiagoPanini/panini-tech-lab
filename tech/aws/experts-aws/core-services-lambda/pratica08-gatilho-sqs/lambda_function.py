@@ -10,14 +10,15 @@ logger = logging.getLogger('lambda_logger')
 logger = log_config(logger, flag_stream_handler=True)
 
 # Retornando variáveis de ambiente da função
-QUEUE_NAME = os.environ['QUEUE_NAME']
-MAX_QUEUE_MSGS = os.environ['MAX_QUEUE_MSGS']
-DYNAMODB_TABLE = os.environ['DYNAMODB_TABLE']
-
-# Definindo padrões para auxiliar testes locais
-QUEUE_NAME = 'rock-albuns-messages' if QUEUE_NAME is None else QUEUE_NAME
-MAX_QUEUE_MSGS = 10 if MAX_QUEUE_MSGS is None else MAX_QUEUE_MSGS
-DYNAMODB_TABLE = 'rock-albuns' if DYNAMODB_TABLE is None else DYNAMODB_TABLE
+try:
+    QUEUE_NAME = os.environ['QUEUE_NAME']
+    MAX_QUEUE_MSGS = os.environ['MAX_QUEUE_MSGS']
+    DYNAMODB_TABLE = os.environ['DYNAMODB_TABLE']
+except KeyError as ke:
+    # Definindo padrões para auxiliar testes locais
+    QUEUE_NAME = 'rock-albuns-messages'
+    MAX_QUEUE_MSGS = 10
+    DYNAMODB_TABLE = 'rock-albuns'
 
 # Instanciando recursos via boto3
 sqs = boto3.resource('sqs')

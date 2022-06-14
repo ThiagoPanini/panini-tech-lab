@@ -63,7 +63,7 @@ parser = argparse.ArgumentParser()
 DEFAULT_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'rock_albuns_scrapping_pg1-6000.json')
 
 # Adicionando argumentos
-parser.add_argument('--mode', '-m', required=False, default='put', type=str) # procurar como restringir argumentos
+parser.add_argument('--mode', '-m', required=False, default='test', type=str) # procurar como restringir argumentos
 parser.add_argument('--page-start', '-s', required=False, default=1, type=int)
 parser.add_argument('--page-end', '-e', required=False, default=20, type=int)                    
 parser.add_argument('--log-step', '-l', required=False, default=5, type=int)
@@ -136,8 +136,10 @@ class ManageRockAlbuns():
         # Salvando arquivo em formato json aninhado (lista de dicts)
         data_path = os.path.join(file_path, file_name)
         try:
+            # Removendo duplicatas
+            dedup_data = [dict(d) for d in set([frozenset(i.items()) for i in data])]
             with open(data_path, 'w', encoding='utf-8') as f:
-                f.write(json.dumps(data, ensure_ascii=False))
+                f.write(json.dumps(dedup_data, ensure_ascii=False))
             logger.info(f'Arquivo salvo com sucesso em {data_path}')
         except Exception as e:
             logger.error(f'Erro ao salvar arquivo em {data_path}. Exception: {e}')
