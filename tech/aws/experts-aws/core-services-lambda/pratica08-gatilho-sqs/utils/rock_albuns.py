@@ -1,27 +1,30 @@
 """
 ---------------------------------------------------
------------- SCRIPT: get_rock_albuns.py -----------
+------------- SCRIPT: rock_albuns.py --------------
 ---------------------------------------------------
-Script responsável por realizar a extração, via web
-scrapping, de álbuns de rocks armazenados no site
-dr.loudness-war.info. A utilização deste script se
-faz presente para simular uma espécie de input de
-diversos eventos (álbuns de rock em formato json)
-para serviços da AWS (Lambda e SQS)
+Script responsável por gerenciar as atividades
+relacionadas a utilização de funções Lambda em
+conjunto com serviços como s3 e sqs. A grande lógica
+deste script envolve a realização de três principais
+ações:
+1. Extração de dados de álbuns de rock via web scrapping
+2. Put no S3 ou envio de mensagens desses dados via SQS
+3. Validação de inserções realizadas no DynamoDB
 
 Table of Contents
 ---------------------------------------------------
 1. Configurações iniciais
     1.1 Importando bibliotecas
     1.2 Logging e variáveis do projeto
-2. Web Scrapping de álbuns
-    2.1 Definindo função de extração
-    2.2 Executando código no main
+2. Classe de gerenciamento de ações
+    2.1 Extraindo e enviando álbuns de rock
+3. Execução do script
+    3.1 Gerenciando opções e coordenando execução
 ---------------------------------------------------
 """
 
 # Author: Thiago Panini
-# Date: 10/06/2022
+# Date: 13/06/2022
 
 
 """
@@ -114,8 +117,8 @@ logger = log_config(logger, flag_stream_handler=True)
 
 """
 ---------------------------------------------------
----------- 2. CLASSES DE PROCESSAMENTO ------------
-        2.1 Requisição de álbuns de rock
+------- 2. CLASSE DE GERENCIAMENTO DE AÇÕES -------
+     2.1 Extraindo e enviando álbuns de rock
 ---------------------------------------------------
 """
 
@@ -127,6 +130,25 @@ class ManageRockAlbuns():
     
     def save_local_data(self, data, file_path, file_name):
         """
+        Realiza o salvamento de dados extraídos no método
+        de web scrapping em formato json em diretório local
+
+        Parâmetros
+        ----------
+        :param data:
+            Conteúdo extraído obtido em um formato de lista
+            formada por dicionários representando, individualmente,
+            álbuns de rock extraídos via web scrapping. Este
+            formato configura um arquivo JSON aninhado.
+            [type: list]
+
+        :param file_path:
+            Diretório de salvamento do arquivo JSON
+            [type: str]
+
+        :param file_name:
+            Nome do arquivo JSON a ser salvo
+            [type: str]
         """
 
         # Criando diretório caso existente
@@ -147,6 +169,17 @@ class ManageRockAlbuns():
     
     def load_local_data(self, file_path, file_name):
         """
+        Realiza a leitura de arquivo JSON salvo localmente
+
+        Parâmetros
+        ----------
+        :param file_path:
+            Diretório de carregamento do arquivo JSON
+            [type: str]
+
+        :param file_name:
+            Nome do arquivo JSON a ser lido
+            [type: str]
         """
 
         # Realizando leitura do arquivo
@@ -162,9 +195,109 @@ class ManageRockAlbuns():
         return rock_albuns
 
 
-    def web_scrapping(self, page_start, page_end, log_step, 
-                      base_url=BASE_URL, **kwargs):
+    def web_scrapping(self, page_start, page_end, base_url=BASE_URL, 
+                      headers=HEADERS, **kwargs):
         """
+        Método responsável por aplicar o processo de web 
+        scrapping de modo a extrair dados de álbuns de
+        rock devidamente preparados em formato JSON. Os
+        dados brutos são extraídos utilizando as libs
+        requests e BeautifulSoup do python para obtenção
+        de um body de requisição em formato HTML e sua 
+        posterior transformação via parser do BeautifulSoup.
+
+        O processo de transformação foi construído com base
+        nas tags de tabelas do site origem, permitindo
+        a efetiva listagem dos dados necessários para a 
+        proposta desta atividade.
+
+        Os parâmetros deste método foram pensados para
+        propor a maior facilidade possível ao usuário
+        que pretende testar suas funcionalidades, seja
+        aplicando o processo de web scrapping em todo
+        o site ou então em um conjunto reduzido de páginas.
+
+        Como o site é dividido em um grande número de
+        páginas (cada uma contendo os registros de
+        álbuns de rock em tabelas), os parâmetros de início
+        e final de página atuam de modo a propor uma
+        extração dinâmica de conteúdo.
+
+        Parâmetros
+        ----------
+        :param page_start:
+            Página de início das requisições. O usuário pode
+            utilizar este parâmetro para iniciar da primeira
+            página (page_start=1) ou então continuar um 
+            processo paralisado previamente (page_start=n)
+            [type: int]
+
+        :param page_end:
+            Página de finalização das requisições. Até a 
+            construção deste código, o site contava com
+            aproximadamente 6000 páginas disponíveis com
+            informações de álbuns de rock. Iterar por todas
+            estas pode ser um processo demorado e, dessa forma
+            este parâmetro pode auxiliar na extração de um
+            conjunto reduzido de dados. As mensagens de log
+            são mostradas ao usuário a cada self.log_step 
+            iterações (atributo da classe)
+            [type: int]
+
+        :param base_url:
+            URL básica do site alvo do processo de web
+            scrapping. Este parâmetro é configurado como
+            padrão no próprio código. Qualquer alteração em
+            seu conteúdo pode configurar em erros críticos
+            nas funcionalidades da classe, dado que toda a 
+            lógica de extração e transformação do conteúdo
+            foi criada com base nas características do site
+            aqui definido.
+            [type: str, default='https://dr.loudness-war.info/album/list/']
+
+        :param headers:
+            As informações contidos no site alvo da extração
+            envolvem parâmetros que não serão utilizados
+            posteriormente dentro das propostas desta atividade.
+            Desta forma, o parâmetro headers tem por objetivo
+            definir o cabeçalho dos valores extraídos no processo
+            de transformação do conteúdo da página, sendo composto
+            pelas informações de "banda", "álbum" e "ano". Assim
+            como o parâmetro base_url, o parâmetro headers é
+            definido de maneira fixa neste código. Qualquer
+            alteração em seu conteúdo pode configurar em graves
+            erros nas funcionalidades aqui consolidadas.
+            [type: list, default=["banda", "album", "ano"]]
+
+        **kwargs:
+        :arg request_error_limit:
+            Define um número máximo de erros de requisição
+            durante o processo de webscrapping. A cada exceção
+            obtida, um contador de erros é incrementado no laço
+            de repetição configurado entre a página de início 
+            (page_start) e a página de finalização (page_end).
+            Quando este contador superar o número definido 
+            por este argumento, o método será encerrado de
+            maneira forçada.
+            [type: int, default=10]
+
+        :arg request_wait:
+            Define o tempo de espera (em segundos) até
+            que uma próxima requisição seja realizada caso
+            uma exceção seja retornada no método.Em linhas
+            gerais, um dos grandes motivadores de
+            erros de requisição envolvendo múltiplas 
+            requisições sequências é o curto tempo entre
+            requisições. Dessa forma, sempre que um erro
+            é obtido (e este não ultrapassa o limite
+            definido), um tempo de espera é configurado
+            até que a próxima requisição seja realizada.
+            [type: int, default=2]
+
+        :arg file_path:
+            Diretório local a ser utilizado para salvar
+            o arquivo obtido com o processo de scrapping.
+            [type: str, default=os.path.dirname(os.path.abspath(__file__))]
         """
 
         # Informações sobre o processo
@@ -211,7 +344,7 @@ class ManageRockAlbuns():
             # Iterando sobre cada elemento e transformando em json aninhado
             for row in td_data[1:]:
                 content = [c.text.strip() for c in row][:3] # Coleta apenas das informações de banda, álbum e ano
-                json_content = {h: v for h, v in zip(HEADERS, content)}
+                json_content = {h: v for h, v in zip(headers, content)}
                 rock_albuns.append(json_content)
 
         # Finalizando etapa de extração
@@ -221,6 +354,34 @@ class ManageRockAlbuns():
 
     def rock_data_to_s3(self, bucket, prefix, nested_json, n_objs):
         """
+        Método utilizado para iterar sobre cada elemento
+        JSON dentro da lista de dicionários e realizar
+        chamadas de put para um bucket definido no s3.
+
+        Parâmetros
+        ----------
+        :param bucket:
+            Nome do bucket alvo da escrita de objetos
+            [type: str]
+
+        :param prefix:
+            Prefixo (folder) para escrita dos objetos
+            [type: str]
+
+        :param nested_json:
+            Conteúdo a ser iterado para escrita no s3
+            e representado como um JSON aninhado gerado
+            a partir do processo de webscrapping.
+            [type: list]
+
+        :param n_objs:
+            Define um limite de iteração de conteúdos
+            da lista para escrita no s3. Considerando
+            a quantidade de elementos totais extráidos
+            no processo de webscrapping, este limitador
+            pode atuar de forma positiva para testes
+            em um cenário reduzido de elementos.
+            [type: int]
         """
 
         # Transformando json aninhado (caso necessário)
@@ -256,11 +417,53 @@ class ManageRockAlbuns():
 
     def rock_data_to_sqs(self, queue, nested_json, n_objs, interval):
         """
+        Método utilizado para iterar sobre cada elemento
+        JSON dentro da lista de dicionários e realizar
+        o envio dos objetos como mensagens para fila no SQS.
+
+        Parâmetros
+        ----------
+        :param queue:
+            Nome da fila alvo da escrita das mensagens no SQS.
+            A obtenção de um objeto de fila do recurso sqs do
+            boto3 é feita a partir da chamada do método
+            get_queue_url(), onde o principal parâmetro é
+            justamente o nome da fila.
+            [type: str]
+
+        :param nested_json:
+            Conteúdo a ser iterado para escrita no s3
+            e representado como um JSON aninhado gerado
+            a partir do processo de webscrapping.
+            [type: list]
+
+        :param n_objs:
+            Define um limite de iteração de conteúdos
+            da lista para escrita no s3. Considerando
+            a quantidade de elementos totais extráidos
+            no processo de webscrapping, este limitador
+            pode atuar de forma positiva para testes
+            em um cenário reduzido de elementos.
+            [type: int]
+
+        :param interval:
+            Define um intervalo de "mensagens/segundo"
+            para a escrita no SQS. A escrita de múltiplas 
+            mensagens pode ser um processo a ser analisado
+            e acompanhado de perto. Dessa forma, este 
+            parâmetro pode ser utilizado para configurar
+            um fluxo de mensagens que seja adequado para
+            a visualização e acompanhamento dos envios.
+            Como exemplos de configurações, interval=1 
+            indica o envio de 1 mensagem por segundo. Já
+            interval=0.1 indica o envio de 10 mensagens
+            por segundo.
+            [type: float]
         """
 
         # Instanciando client do sqs e coletando url da fila
         sqs = boto3.client('sqs')
-        response = sqs.get_queue_url(QueueName=SQS_QUEUE)
+        response = sqs.get_queue_url(QueueName=queue)
         queue_url = response['QueueUrl']
 
         # Comunicando o total de iterações no laço
@@ -290,6 +493,17 @@ class ManageRockAlbuns():
 
     def count_dynamodb_items(self, table):
         """
+        Como o último passo desta atividade envolve
+        a escrita de objetos em tabela do DynamoDB,
+        este método visa facilitar o acompanhamento
+        do usuário através da contagem de itens
+        presentes em uma tabela alvo do DynamoDB.
+
+        Parâmetros
+        ----------
+        :param table:
+            Tabela alvo da contagem de itens no DynamoDB
+            [type: str]
         """
 
         # Validando quantidade de itens no dynamodb
@@ -305,28 +519,11 @@ class ManageRockAlbuns():
         return total_itens
        
 
-"""
-Ideias:
-    - [x] Método para webscrapping
-    - [x] Método para salvar dados localmente
-    - [x] Método para carregar dados localmente
-    - [x] Método para inserir dados no s3
-    - [x] Método para inserir dados no sqs
-    - [x] Método para gerenciar put dos dados (s3 ou sqs)
-    - [x] Método para validar dados no dynamodb
-
-    - Script para escolher caminhos conforme inputs
-
-    1. Webscrapping -> Salvar dados
-    2. Leitura dados -> Carga no s3/sqs
-    3. Valida dynamodb
-
-"""
 
 """
 ---------------------------------------------------
 -------------- 3. EXECUÇÃO DO SCRIPT --------------
-        3.1 Requisitanto e 
+   3.1 Gerenciando opções e coordenando execução
 ---------------------------------------------------
 """ 
 
@@ -391,7 +588,7 @@ if __name__ == '__main__':
     
     # Validando modos
     if MODE == 'get':
-        rock_albuns = rock.web_scrapping(
+        rock.web_scrapping(
             page_end=PAGE_END,
             page_start=PAGE_START,
             log_step=LOG_STEP
