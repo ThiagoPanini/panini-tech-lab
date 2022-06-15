@@ -55,6 +55,9 @@ def lambda_handler(event, context):
 ---------------------------------------------------
 """
 
+s3 = boto3.resource('s3')
+s3.Bucket('bucket').upload_file('~/file.txt', 'file.txt')
+
 # Definindo variáveis para leitura de evento de teste
 LAMBDA_PATH = os.path.join(os.getcwd(), 'tech/aws/experts-aws/core-services-lambda')
 FUNCTION_REF = 'pratica08-gatilho-sqs'
