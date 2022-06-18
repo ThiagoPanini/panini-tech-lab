@@ -1,4 +1,7 @@
 Parameters:
+  NameOfService:
+    Type: String
+    Description: Tag to be included on the resources provisioned
   KeyName:
     Type: AWS::EC2::KeyPair::KeyName
     Description: The name of an existing EC2 Key Pair to enable SSH access into the server
