@@ -1,0 +1,52 @@
+Parameters:
+  KeyName:
+    Type: AWS::EC2::KeyPair::KeyName
+    Description: The name of an existing EC2 Key Pair to enable SSH access into the server
+  InstanceType:
+    Type: String
+    Default: t2.micro
+    AllowedValues:
+      - t2.micro
+      - m1.small
+      - m1.large
+    Description: The type of the instance to be initialized
+Mappings:
+  RegionMap:
+    us-east-1:
+      AMI: ami-0cff7528ff583bf9a
+    us-west-1:
+      AMI: ami-0bdb828fd58c52235
+    us-west-2:
+      AMI: ami-a0cfeed8
+    eu-west-1:
+      AMI: ami-047bb4163c506cd98
+    ap-southeast-1:
+      AMI: ami-08569b978cc4dfa10
+    ap-southeast-2:
+      AMI: ami-09b42976632b27e9b
+    sa-east-1:
+      AMI: ami-07b14488da8ea02a0
+Resources:
+  SecurityGroupSSHLab05:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Permite acesso SSH via porta 22
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+  EC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: !Ref InstanceType
+      ImageId: !FindInMap
+        - RegionMap
+        - !Ref AWS::Region
+        - AMI
+      SecurityGroups: 
+        - !Ref SecurityGroupSSHLab05
+      KeyName: !Ref KeyName
+      Tags:
+        - Key: Name
+          Value: Lab
