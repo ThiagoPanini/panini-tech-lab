@@ -1,0 +1,130 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >-
+  Template utilizado para construcao de toda a infraestrutura de redes em uma conta AWS, 
+  incluindo componentes como VPC, Internet Gateway, Route Tables, NACLs, Security Groups 
+  e instancias EC2.
+# Mapeamentos customizados a serem utilizados nos recursos
+Mappings:
+  # Nomes de zonas de disponibilidade da região de uso
+  AZNames:
+    AZ1a:
+      Name: sa-east-1a
+    AZ1c:
+      Name: sa-east-1c
+# Recursos a serem implantados no CloudFormation
+Resources:
+  # Virtual Private Cloud customizada
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      CidrBlock: 172.33.0.0/16
+      Tags:
+        - Key: Name
+          Value: cfn-app-vpc
+  # Subnets públicas e privadas em cada AZ
+  PublicSubnet1a:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 172.33.0.0/24
+      AvailabilityZone: !FindInMap
+        - AZNames
+        - AZ1a
+        - Name
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: cfn-pub-subnet-1a
+  PrivateSubnet1a:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 172.33.1.0/24
+      AvailabilityZone: !FindInMap
+        - AZNames
+        - AZ1a
+        - Name
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: cfn-pvt-subnet-1a
+  PublicSubnet1c:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 172.33.2.0/24
+      AvailabilityZone: !FindInMap
+        - AZNames
+        - AZ1c
+        - Name
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: cfn-pub-subnet-1c
+  PrivateSubnet1c:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 172.33.3.0/24
+      AvailabilityZone: !FindInMap
+        - AZNames
+        - AZ1c
+        - Name
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: cfn-pvt-subnet-1c
+  # Internet Gateway e anexo à VPC
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: cfn-app-igw
+  VPCGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref InternetGateway
+  # Route tables com rotas públicas e privadas
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: cfn-pub-rt
+  PrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: cfn-pvt-rt
+  PublicRoute:
+    Type: AWS::EC2::Route
+    DependsOn: VPCGatewayAttachment
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+  # Associações de Route Tables com subnets
+  PublicSubnetRTAssociation1a:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnet1a
+      RouteTableId: !Ref PublicRouteTable
+  PublicSubnetRTAssociation1c:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnet1c
+      RouteTableId: !Ref PublicRouteTable
+  PrivateSubnetRTAssociation1a:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PrivateSubnet1a
+      RouteTableId: !Ref PrivateRouteTable
+  PrivateSubnetRTAssociation1c:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PrivateSubnet1c
+      RouteTableId: !Ref PrivateRouteTable
+      

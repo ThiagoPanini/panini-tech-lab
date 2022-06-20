@@ -1,0 +1,63 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >-
+  Template utilizado para construcao de toda a infraestrutura de redes em uma conta AWS, 
+  incluindo componentes como VPC, Internet Gateway, Route Tables, NACLs, Security Groups 
+  e instancias EC2.
+# Mapeamentos customizados a serem utilizados nos recursos
+Mappings:
+  # Nomes de zonas de disponibilidade da região de uso
+  AZNames:
+    AZ1a:
+      Name: sa-east-1a
+    AZ1c:
+      Name: sa-east-1c
+# Recursos a serem implantados no CloudFormation
+Resources:
+  # Virtual Private Cloud customizada
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      CidrBlock: 172.33.0.0/16
+      Tags:
+        - Key: Name
+          Value: cfn-app-vpc
+  # Subnets públicas e privadas em cada AZ
+  PublicSubnet1a:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 172.33.0.0/24
+      AvailabilityZone: !FindInMap
+        - AZNames
+        - AZ1a
+        - Name
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: cfn-pub-subnet-1a
+  PrivateSubnet1a:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 172.33.1.0/24
+      AvailabilityZone: !FindInMap
+        - AZNames
+        - AZ1a
+        - Name
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: cfn-pvt-subnet-1a
+  PublicSubnet1c:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 172.33.2.0/24
+      AvailabilityZone: !FindInMap
+        - AZNames
+        - AZ1c
+        - Name
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: cfn-pub-subnet-1c
+  PrivateSubnet1c:

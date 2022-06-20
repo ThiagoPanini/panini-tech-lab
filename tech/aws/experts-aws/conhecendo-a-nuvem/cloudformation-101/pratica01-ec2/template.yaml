@@ -1,3 +1,8 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Metadata:
+  License: Apache-2.0
+Description: 'Template do CloudFormation para implantação de uma instância EC2
+  do tipo t2.micro e um ID de AMI com referência na região us-east-1.'
 Resources:
   Ec2Instance:
     Type: AWS::EC2::Instance
