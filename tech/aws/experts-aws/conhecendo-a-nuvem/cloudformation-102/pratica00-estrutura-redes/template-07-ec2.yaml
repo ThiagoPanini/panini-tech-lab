@@ -14,18 +14,29 @@ Parameters:
     Default: 0.0.0.0/0
     AllowedPattern: (\d{1,3}).(\d{1,3}).(\d{1,3}).(\d{1,3})/(\d{1,2})
     ConstraintDescription: Precisa ser um bloco CIDR valido no formato X.X.X.X/X
+  # Chave de acesso
+  KeyName:
+    Type: AWS::EC2::KeyPair::KeyName
+    Description: Chave de acesso para instancias EC2
 # Mapeamentos customizados a serem utilizados nos recursos
 Mappings:
-  # Nomes de zonas de disponibilidade da região de uso
+  # Mapeamentos relacionados às AZs
   AvailabilityZone:
     1a:
       Name: sa-east-1a
     1c:
       Name: sa-east-1c
-  # CIDR Block da VPC para configuração da rede
+  # Mapeamentos relacionados à VPC
   VPC:
     CidrBlock:
       Value: 172.33.0.0/16
+  # Mapeamentos relacionados às EC2
+  EC2:
+    Instance:
+      Type: t2.micro
+      ImageId: ami-037c192f0fa52a358
+    InstanceProfile:
+      SSMRoleName: ec2-ssm-instance-profile
 # Recursos a serem implantados no CloudFormation
 Resources:
   # Virtual Private Cloud customizada
@@ -287,11 +298,11 @@ Resources:
         Type: -1
       CidrBlock: !GetAtt VPC.CidrBlock
       RuleAction: Allow
-  PrivateNACLEphemeralOutbound:
+  rivateNACLEphemeralOutbound:
     Type: AWS::EC2::NetworkAclEntry
     Properties:
       NetworkAclId: !Ref PrivateNACL
-      RuleNumber: 100
+      RuleNumber: 200
       Protocol: 6
       Egress: True
       PortRange:
@@ -299,3 +310,80 @@ Resources:
         To: 65535
       CidrBlock: 0.0.0.0/0
       RuleAction: Allow
+  # Instâncias EC2
+  PublicEC2Instance1a:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: !FindInMap [EC2, Instance, Type]
+      ImageId: !FindInMap [EC2, Instance, ImageId]
+      KeyName: !Ref KeyName
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: True
+          DeviceIndex: 0
+          DeleteOnTermination: True
+          SubnetId:
+            Ref: PublicSubnet1a
+          GroupSet:
+            - Ref: WebServerSecurityGroup        
+      Tags:
+        - Key: Name
+          Value: cfn-web-server
+  PrivateEC2Instance1a:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: !FindInMap [EC2, Instance, Type]
+      ImageId: !FindInMap [EC2, Instance, ImageId]
+      KeyName: !Ref KeyName
+      SubnetId: !Ref PrivateSubnet1a
+      SecurityGroupIds:
+        - !Ref BackendSecurityGroup
+      Tags:
+        - Key: Name
+          Value: cfn-backend
+    # EC2 SSM Instance Profile (Role IAM)
+    # O código abaixo poderia ser utilizado para criar uma Role
+    #IAMSSMRole:
+    #  Type: AWS::IAM::Role
+    #  Properties:
+    #    RoleName: cfn-ec2-ssm-instance-profile
+    #    AssumeRolePolicyDocument:
+    #      Version: "2012-10-17"
+    #      Statement:
+    #        - Effect: Allow
+    #          Principal:
+    #            Service: 
+    #              - ec2.amazonaws.com
+    #          Action:
+    #            - sts:AssumeRole
+    #    Path: /
+    #    ManagedPolicyArns:
+    #      - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+  EC2InstanceProfileSSM:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: /
+      Roles: 
+        #- Ref: IAMSSMRole
+        - !FindInMap [EC2, InstanceProfile, SSMRoleName]
+  PublicEC2InstanceSSM1c:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: !FindInMap [EC2, Instance, Type]
+      ImageId: !FindInMap [EC2, Instance, ImageId]
+      IamInstanceProfile: !Ref EC2InstanceProfileSSM
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: True
+          DeviceIndex: 0
+          DeleteOnTermination: True
+          SubnetId:
+            Ref: PublicSubnet1c
+          GroupSet:
+            - Ref: WebServerSecurityGroup        
+      Tags:
+        - Key: Name
+          Value: cfn-ssm-instance
+# Outputs
+Outputs:
+  SessionManagementListUrl:
+    Description: Lista de instancias que podem ser conectadas via Session Manager
+    Value: !Sub https://${AWS::Region}.console.aws.amazon.com/systems-manager/session-manager/start-session?region=${AWS::Region}
