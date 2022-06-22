@@ -1,0 +1,40 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: >-
+  Template responsavel por criar uma instancia EC2 em um ambiente
+  totalmente privado de conexão via internet (private subnet) para
+  restricao de conexoes apenas via Session Manager. Adicionalmente,
+  uma role IAM sera criada para servir como instance profile da EC2,
+  alem dos endpoints necessarios para permitir conexoes via SSM sem
+  acessar a internet publica.
+# -----------------------------------------------------------------
+# [RESOURCES]
+# Seção responsável por alocar os recursos a serem provisionados em
+# tempo de execução deste template, sendo eles:
+#
+# IAMSSMRole: Role IAM que permite acesso a instâncias EC2 ao SSM
+# -----------------------------------------------------------------
+Resources:
+  # Role IAM a ser utilizada como instance profile para acesso ao SSM
+  IAMSSMRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: cfn-ec2-ssm-instance-profile
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: 
+                - ec2.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+  # Instance profile a ser assumido pela instância EC2
+  EC2InstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: /
+      Roles:
+        - Ref: IAMSSMRole
