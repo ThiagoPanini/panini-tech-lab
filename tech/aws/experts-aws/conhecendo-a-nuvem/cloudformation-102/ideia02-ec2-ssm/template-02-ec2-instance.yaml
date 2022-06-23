@@ -1,0 +1,108 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: >-
+  Template responsavel por criar uma instancia EC2 em um ambiente
+  totalmente privado de conexão via internet (private subnet) para
+  restricao de conexoes apenas via Session Manager. Adicionalmente,
+  uma role IAM sera criada para servir como instance profile da EC2,
+  alem dos endpoints necessarios para permitir conexoes via SSM sem
+  acessar a internet publica.
+# -----------------------------------------------------------------
+# [METADATA]
+# Seção responsável por alocar elementos de metadados do template,
+# além de configurações adicionais de interface de parâmetros
+# -----------------------------------------------------------------
+Metadata: 
+  AWS::CloudFormation::Interface: 
+    ParameterGroups: 
+      - 
+        Label: 
+          default: Configuracao de Rede
+        Parameters: 
+          - VPCId
+          - SubnetId
+          - SecurityGroupId
+      - 
+        Label: 
+          default: Configuracao da Instancia
+        Parameters: 
+          - InstanceType
+    ParameterLabels: 
+      VPCId: 
+        default: Em qual VPC a instancia deve ser provisionada?
+      SubnetId:
+        default: Subnet privada para implantacao da instancia
+      SecurityGroupId:
+        default: Security Group da instancia
+# -----------------------------------------------------------------
+# [PARAMETERS]
+# Seção responsável por consolidar parâmetros a serem utilizados ao
+# longo do template, sendo eles:
+# -----------------------------------------------------------------
+Parameters:
+  # Id da VPC alvo da implantação da instância EC2
+  VPCId:
+    Description: Selecione abaixo um id de VPC disponivel
+    Type: AWS::EC2::VPC::Id
+  # Id da subnet alvo da implantação da instância EC2
+  SubnetId:
+    Description: Selecione abaixo um id de subnet privada disponivel
+    Type: AWS::EC2::Subnet::Id
+  # Id do security group a ser associado à instância EC2
+  SecurityGroupId:
+    Description: Selecione abaixo um security group para a instancia
+    Type: AWS::EC2::SecurityGroup::Id
+# -----------------------------------------------------------------
+# [MAPPINGS]
+# Seção responsável por consolidar variáveis utilizadas no template
+# de modo a facilitar a configuração de recursos
+# -----------------------------------------------------------------
+Mappings:
+  EC2:
+    Instance:
+      Type: t2.micro
+      ImageId: ami-0cff7528ff583bf9a
+# -----------------------------------------------------------------
+# [RESOURCES]
+# Seção responsável por alocar os recursos a serem provisionados em
+# tempo de execução deste template, sendo eles:
+#
+# IAMSSMRole: Role IAM que permite acesso a instâncias EC2 ao SSM
+# -----------------------------------------------------------------
+Resources:
+  # Role IAM a ser utilizada como instance profile para acesso ao SSM
+  IAMSSMRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: cfn-ec2-ssm-instance-profile
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: 
+                - ec2.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+  # Instance profile a ser assumido pela instância EC2
+  EC2InstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: /
+      Roles:
+        - Ref: IAMSSMRole
+  # Instância EC2
+  EC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: !FindInMap [EC2, Instance, Type]
+      ImageId: !FindInMap [EC2, Instance, ImageId]
+      SubnetId: !Ref SubnetId
+      IamInstanceProfile: !Ref EC2InstanceProfile
+      SecurityGroupIds:
+        - !Ref SecurityGroupId
+      Tags:
+        - Key: Name
+          Value: cfn-ec2-ssm
