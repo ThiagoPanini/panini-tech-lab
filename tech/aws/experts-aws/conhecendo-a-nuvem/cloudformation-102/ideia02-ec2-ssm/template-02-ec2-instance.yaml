@@ -20,7 +20,6 @@ Metadata:
         Parameters: 
           - VPCId
           - SubnetId
-          - SecurityGroupId
       - 
         Label: 
           default: Configuracao da Instancia
@@ -31,8 +30,6 @@ Metadata:
         default: Em qual VPC a instancia deve ser provisionada?
       SubnetId:
         default: Subnet privada para implantacao da instancia
-      SecurityGroupId:
-        default: Security Group da instancia
 # -----------------------------------------------------------------
 # [PARAMETERS]
 # Seção responsável por consolidar parâmetros a serem utilizados ao
@@ -43,14 +40,10 @@ Parameters:
   VPCId:
     Description: Selecione abaixo um id de VPC disponivel
     Type: AWS::EC2::VPC::Id
-  # Id da subnet alvo da implantação da instância EC2
+  # Id da Subnet alvo da implantação da instância EC2
   SubnetId:
     Description: Selecione abaixo um id de subnet privada disponivel
     Type: AWS::EC2::Subnet::Id
-  # Id do security group a ser associado à instância EC2
-  SecurityGroupId:
-    Description: Selecione abaixo um security group para a instancia
-    Type: AWS::EC2::SecurityGroup::Id
 # -----------------------------------------------------------------
 # [MAPPINGS]
 # Seção responsável por consolidar variáveis utilizadas no template
@@ -60,16 +53,17 @@ Mappings:
   EC2:
     Instance:
       Type: t2.micro
-      ImageId: ami-0cff7528ff583bf9a
+      ImageId: ami-0cff7528ff583bf9a  
+  VPC:
+    Config:
+      CidrBlock: 172.33.0.0/16
 # -----------------------------------------------------------------
 # [RESOURCES]
 # Seção responsável por alocar os recursos a serem provisionados em
-# tempo de execução deste template, sendo eles:
-#
-# IAMSSMRole: Role IAM que permite acesso a instâncias EC2 ao SSM
+# tempo de execução deste template.
 # -----------------------------------------------------------------
 Resources:
-  # Role IAM a ser utilizada como instance profile para acesso ao SSM
+  # Configurações de role IAM e instance profile para a EC2
   IAMSSMRole:
     Type: AWS::IAM::Role
     Properties:
@@ -86,14 +80,25 @@ Resources:
       Path: /
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
-  # Instance profile a ser assumido pela instância EC2
   EC2InstanceProfile:
     Type: AWS::IAM::InstanceProfile
     Properties:
       Path: /
       Roles:
         - Ref: IAMSSMRole
-  # Instância EC2
+  # Configurações da EC2
+  EC2SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: !Ref VPCId
+      GroupName: cfn-https-ssm
+      GroupDescription: Permite acesso HTTPS de recursos no range da VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: !FindInMap [VPC, Config, CidrBlock]
+          Description: Acesso via porta 443 do intervalo de IPs da VPC
   EC2Instance:
     Type: AWS::EC2::Instance
     Properties:
@@ -102,7 +107,8 @@ Resources:
       SubnetId: !Ref SubnetId
       IamInstanceProfile: !Ref EC2InstanceProfile
       SecurityGroupIds:
-        - !Ref SecurityGroupId
+        - !Ref EC2SecurityGroup
       Tags:
         - Key: Name
           Value: cfn-ec2-ssm
+  
