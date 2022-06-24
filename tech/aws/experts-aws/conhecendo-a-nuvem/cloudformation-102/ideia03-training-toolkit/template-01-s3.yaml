@@ -1,0 +1,19 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: >-
+  Em construcao
+# -----------------------------------------------------------------
+# [RESOURCES]
+# Seção responsável por alocar os recursos a serem provisionados em
+# tempo de execução deste template.
+# -----------------------------------------------------------------
+Resources:
+  # Bucket s3 para alocação dos recursos do kit de treinamento
+  S3BucketToolkit:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub aws-training-toolkit-${AWS::AccountId}-${AWS::Region}
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: True
+        BlockPublicPolicy: True 
+        IgnorePublicAcls: True
+        RestrictPublicBuckets: True

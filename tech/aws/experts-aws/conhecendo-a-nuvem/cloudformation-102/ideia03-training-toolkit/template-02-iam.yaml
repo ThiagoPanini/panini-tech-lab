@@ -1,0 +1,65 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: >-
+  Em construcao
+# -----------------------------------------------------------------
+# [MAPPINGS]
+# Seção responsável por consolidar variáveis utilizadas no template
+# de modo a facilitar a configuração de recursos
+# -----------------------------------------------------------------
+Mappings:
+  S3:
+    Source:
+      Resource: arn:aws:s3:::aws-experts-dx6sdjz2j7ro-sa-east-1/data/*
+
+# -----------------------------------------------------------------
+# [RESOURCES]
+# Seção responsável por alocar os recursos a serem provisionados em
+# tempo de execução deste template.
+# -----------------------------------------------------------------
+Resources:
+  # Bucket s3 para alocação dos recursos do kit de treinamento
+  S3BucketToolkit:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub aws-training-toolkit-${AWS::AccountId}-${AWS::Region}
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: True
+        BlockPublicPolicy: True 
+        IgnorePublicAcls: True
+        RestrictPublicBuckets: True
+  # Elementos IAM a serem assumidos por função Lambda para escrita no bucket
+  IAMRoleS3PutObject:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: cfn-lambda-ttkit-data
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Path: /
+      Policies:
+        # Política para coleta de objetos em bucket origem
+        - PolicyName: cfn-s3-get-ttkit-data-source
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 's3:GetObject'
+                Resource: !FindInMap [S3, Source, Resource]
+        # Política para escrita de objetos em bucket destino
+        - PolicyName: cfn-s3-put-ttkit-data-destination
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 's3:PutObject'
+                Resource: !Join ["", [!GetAtt S3BucketToolkit.Arn, /*]]
+
+# https://cloud.netapp.com/blog/aws-cvo-blg-aws-s3-object-copying-between-aws-accounts
