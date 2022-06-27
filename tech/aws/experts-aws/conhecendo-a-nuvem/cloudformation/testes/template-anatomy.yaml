@@ -1,0 +1,39 @@
+AWSTemplateFormatVersion: "version date"
+# [OPCIONAL]
+# Referência de versão que o template do CloudFormation considera. Aceita apenas o valor ""
+
+Description:
+# [OPCIONAL]
+# Descrição resumida do template para fins de documentação
+# A única restrição de ordem é que a seção Description, se existir, seja colocada após a seção AWSTemplateFormatVersion
+
+Metadata:
+# [OPCIONAL]
+# Objetos que proporcionam informações adicionais sobre o template
+
+Parameters:
+# [OPCIONAL]
+# Valores a serem passados em tempo de execução ao criar ou atualizar um stack
+# Parâmetros podem ser referenciados via função intrínseca !Ref na seção de Resources ou Outputs
+
+Mappings:
+# [OPCIONAL]
+# Conjunto de chaves e valores que podem auxiliar na obtenção de informações no template
+# Tais informações podem ser obtidas utilizando a função intrínseca !FindInMap
+
+Conditions:
+# [OPCIONAL]
+# Condições de controle que podem especificar se determinados recursos serão criados ou não
+
+Transform:
+# [OPCIONAL]
+# Seção utilizada para aplicações serverless que especifica a versão do SAM a ser utilizada
+
+Resources:
+# [OBRIGATÓRIO]
+# Aqui são alocados todos os recursos de infraestrutura a serem implantados
+# É a única seção obrigatória do template
+
+Outputs:
+# [OPCIONAL]
+# Informações que podem ser coletadas após a execução do template

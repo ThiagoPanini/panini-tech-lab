@@ -1,0 +1,20 @@
+Resources:
+  SecurityGroupSSH:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Permite acesso SSH via porta 22
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+  Ec2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      ImageId: ami-0cff7528ff583bf9a
+      Tags:
+        - Key: Name
+          Value: acg-lab-02
+      SecurityGroups:
+        - !Ref SecurityGroupSSH
