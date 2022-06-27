@@ -31,7 +31,7 @@ resource "aws_instance" "tf-ec2" {
     volume_size           = 8
     delete_on_termination = true
     encrypted             = true
-    kms_key_id            = data.aws_kms_key.ebs.key_id
+    #kms_key_id            = data.aws_kms_key.ebs.key_id
   }
 
   tags = {
