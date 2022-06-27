@@ -1,5 +1,6 @@
 /* ----------------------------------------
-MÓDULO: network
+MODULES: modules/network
+FILE: variables.tf
 
 Declaração de variáveis relacionadas a recursos
 de redes a serem implantados na infraestrutura
