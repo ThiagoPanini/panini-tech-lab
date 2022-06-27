@@ -43,17 +43,12 @@ resource "aws_network_acl" "tf-pvt-nacl" {
 
 resource "aws_network_acl_association" "tf-nacl-association-a" {
   network_acl_id = aws_network_acl.tf-pvt-nacl.id
-  subnet_id      = var.subnet_ids["az-a"]
-}
-
-resource "aws_network_acl_association" "tf-nacl-association-b" {
-  network_acl_id = aws_network_acl.tf-pvt-nacl.id
-  subnet_id      = var.subnet_ids["az-b"]
+  subnet_id      = var.subnet_id
 }
 
 # Definindo security group para instância ec2
 resource "aws_security_group" "tf-https-vpc-sg" {
-  name        = "tf-https-vpc-sg"
+  name        = "tf-https-vpc"
   description = "Permite trafego https do cidr block da vpc"
   vpc_id      = var.vpc_id
 
@@ -65,7 +60,15 @@ resource "aws_security_group" "tf-https-vpc-sg" {
     description = "Porta 443 do intervalo da vpc"
   }
 
+  egress {
+    protocol    = "all"
+    from_port   = 0
+    to_port     = 0
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "Trafego de saida liberado para todas as portas"
+  }
+
   tags = {
-    "Name" = "tf-https-vpc-sg"
+    "Name" = "tf-https-vpc"
   }
 }

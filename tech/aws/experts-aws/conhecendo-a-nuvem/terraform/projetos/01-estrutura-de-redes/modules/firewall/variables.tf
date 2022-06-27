@@ -21,7 +21,7 @@ variable "vpc_cidr_block" {
   type        = string
 }
 
-variable "subnet_ids" {
-  description = "Ids de cada subnet declarada no projeto"
-  type        = map(string)
+variable "subnet_id" {
+  description = "Id de subnet privada para associação ao nacl"
+  type        = string
 }
