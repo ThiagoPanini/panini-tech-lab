@@ -27,4 +27,15 @@ arquivos main.tf
 # Chamada do módulo ./modules/network
 module "network" {
   source = "./modules/network"
+
+  vpc_cidr_block = "172.11.0.0/16"
+}
+
+# Chamada do módulo ./modules/firewall
+module "firewall" {
+  source = "./modules/firewall"
+
+  vpc_id         = module.network.vpc_id
+  vpc_cidr_block = module.network.vpc_cidr_block
+  subnet_ids     = module.network.subnet_ids
 }
