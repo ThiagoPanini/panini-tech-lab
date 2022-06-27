@@ -89,6 +89,3 @@ resource "aws_vpc_endpoint" "ec2messages" {
   vpc_id            = aws_vpc.tf-vpc.id
   vpc_endpoint_type = "Interface"
 }
-
-# com.amazonaws.us-east-1.ssmmessages
-# com.amazonaws.us-east-1.ec2messages
