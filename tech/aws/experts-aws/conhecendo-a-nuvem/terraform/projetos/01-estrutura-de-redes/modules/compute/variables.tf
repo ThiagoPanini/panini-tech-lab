@@ -23,9 +23,9 @@ variable "instance_type" {
 }
 
 # Subnets para implantação das instâncias
-variable "subnet_ids" {
-  description = "Ids de cada subnet declarada no projeto"
-  type        = map(string)
+variable "subnet_id" {
+  description = "Ids de subnet privada utilizada no projeto"
+  type        = string
 }
 
 # Grupos de segurança
