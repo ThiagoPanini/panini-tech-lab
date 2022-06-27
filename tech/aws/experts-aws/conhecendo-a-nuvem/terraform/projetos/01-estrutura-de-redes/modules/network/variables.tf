@@ -17,3 +17,8 @@ variable "vpc_cidr_block" {
   description = "Bloco cidr que define o intervalo de endereços de ip da vpc"
   type        = string
 }
+
+variable "security_group_id" {
+  description = "Id do security group a ser associado aos endpoints de vpc"
+  type        = string
+}

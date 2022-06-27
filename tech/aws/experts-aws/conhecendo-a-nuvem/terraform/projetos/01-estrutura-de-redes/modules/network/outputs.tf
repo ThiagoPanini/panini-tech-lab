@@ -26,10 +26,7 @@ output "vpc_cidr_block" {
 }
 
 # Exportando informações das subnets
-output "subnet_ids" {
-  description = "Dicionário com IDs de subnets para definição de regras em outros módulos"
-  value = {
-    "az-a" = aws_subnet.tf-pvt-sub-1a.id
-    "az-b" = aws_subnet.tf-pvt-sub-1b.id
-  }
+output "subnet_id" {
+  description = "Id de subnet privada para definição de regras em outros módulos"
+  value       = aws_subnet.tf-pvt-sub-1a.id
 }

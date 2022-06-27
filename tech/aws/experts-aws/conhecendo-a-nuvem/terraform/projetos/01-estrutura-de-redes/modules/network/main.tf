@@ -41,16 +41,6 @@ resource "aws_subnet" "tf-pvt-sub-1a" {
   }
 }
 
-resource "aws_subnet" "tf-pvt-sub-1b" {
-  vpc_id            = aws_vpc.tf-vpc.id
-  availability_zone = "us-east-1b"
-  cidr_block        = cidrsubnet(aws_vpc.tf-vpc.cidr_block, 8, 1)
-
-  tags = {
-    "Name" = "tf-pvt-sub-1b"
-  }
-}
-
 # Definindo a tabela de rotas da estrutura de redes
 resource "aws_route_table" "tf-pvt-rt" {
   vpc_id = aws_vpc.tf-vpc.id
@@ -66,26 +56,48 @@ resource "aws_route_table_association" "tf-pvt-sub-a" {
   subnet_id      = aws_subnet.tf-pvt-sub-1a.id
 }
 
-resource "aws_route_table_association" "tf-pvt-sub-b" {
-  route_table_id = aws_route_table.tf-pvt-rt.id
-  subnet_id      = aws_subnet.tf-pvt-sub-1b.id
-}
-
 # Criando endpoints para conexão de EC2 via SSM
 resource "aws_vpc_endpoint" "ssm" {
-  service_name      = "com.amazonaws.us-east-1.ssm"
-  vpc_id            = aws_vpc.tf-vpc.id
-  vpc_endpoint_type = "Interface"
+  service_name        = "com.amazonaws.us-east-1.ssm"
+  vpc_id              = aws_vpc.tf-vpc.id
+  vpc_endpoint_type   = "Interface"
+  private_dns_enabled = true
+
+  subnet_ids = [
+    aws_subnet.tf-pvt-sub-1a.id
+  ]
+
+  security_group_ids = [
+    var.security_group_id
+  ]
 }
 
 resource "aws_vpc_endpoint" "ssmmessages" {
-  service_name      = "com.amazonaws.us-east-1.ssmmessages"
-  vpc_id            = aws_vpc.tf-vpc.id
-  vpc_endpoint_type = "Interface"
+  service_name        = "com.amazonaws.us-east-1.ssmmessages"
+  vpc_id              = aws_vpc.tf-vpc.id
+  vpc_endpoint_type   = "Interface"
+  private_dns_enabled = true
+
+  subnet_ids = [
+    aws_subnet.tf-pvt-sub-1a.id
+  ]
+
+  security_group_ids = [
+    var.security_group_id
+  ]
 }
 
 resource "aws_vpc_endpoint" "ec2messages" {
-  service_name      = "com.amazonaws.us-east-1.ec2messages"
-  vpc_id            = aws_vpc.tf-vpc.id
-  vpc_endpoint_type = "Interface"
+  service_name        = "com.amazonaws.us-east-1.ec2messages"
+  vpc_id              = aws_vpc.tf-vpc.id
+  vpc_endpoint_type   = "Interface"
+  private_dns_enabled = true
+
+  subnet_ids = [
+    aws_subnet.tf-pvt-sub-1a.id
+  ]
+
+  security_group_ids = [
+    var.security_group_id
+  ]
 }
