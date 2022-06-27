@@ -19,6 +19,10 @@ RESOURCES: Os recursos aqui implantados serão:
   - VPC Endpoints
 -------------------------------------------------- */
 
+# Definindo data sources para globalização do código
+data "aws_region" "current" {}
+data "aws_availability_zones" "available" {}
+
 # Definindo a VPC do projeto
 resource "aws_vpc" "tf-vpc" {
   cidr_block           = var.vpc_cidr_block
@@ -33,7 +37,7 @@ resource "aws_vpc" "tf-vpc" {
 # Definindo as Subnets do projeto
 resource "aws_subnet" "tf-pvt-sub-1a" {
   vpc_id            = aws_vpc.tf-vpc.id
-  availability_zone = "us-east-1a"
+  availability_zone = data.aws_availability_zones.available.names[0]
   cidr_block        = cidrsubnet(aws_vpc.tf-vpc.cidr_block, 8, 0)
 
   tags = {
@@ -58,7 +62,7 @@ resource "aws_route_table_association" "tf-pvt-sub-a" {
 
 # Criando endpoints para conexão de EC2 via SSM
 resource "aws_vpc_endpoint" "ssm" {
-  service_name        = "com.amazonaws.us-east-1.ssm"
+  service_name        = "com.amazonaws.${data.aws_region.current.name}.ssm"
   vpc_id              = aws_vpc.tf-vpc.id
   vpc_endpoint_type   = "Interface"
   private_dns_enabled = true
@@ -73,7 +77,7 @@ resource "aws_vpc_endpoint" "ssm" {
 }
 
 resource "aws_vpc_endpoint" "ssmmessages" {
-  service_name        = "com.amazonaws.us-east-1.ssmmessages"
+  service_name        = "com.amazonaws.${data.aws_region.current.name}.ssmmessages"
   vpc_id              = aws_vpc.tf-vpc.id
   vpc_endpoint_type   = "Interface"
   private_dns_enabled = true
@@ -88,7 +92,7 @@ resource "aws_vpc_endpoint" "ssmmessages" {
 }
 
 resource "aws_vpc_endpoint" "ec2messages" {
-  service_name        = "com.amazonaws.us-east-1.ec2messages"
+  service_name        = "com.amazonaws.${data.aws_region.current.name}.ec2messages"
   vpc_id              = aws_vpc.tf-vpc.id
   vpc_endpoint_type   = "Interface"
   private_dns_enabled = true
