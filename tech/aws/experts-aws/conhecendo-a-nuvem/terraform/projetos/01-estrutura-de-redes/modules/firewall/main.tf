@@ -14,7 +14,7 @@ RESOURCES: Os recursos aqui implantados serão:
   - Security Group
 -------------------------------------------------- */
 
-# Definindo NACL do projeto e associando subnets
+# Definindo nacl do projeto e associando subnets
 resource "aws_network_acl" "tf-pvt-nacl" {
   vpc_id = var.vpc_id
 
@@ -49,4 +49,23 @@ resource "aws_network_acl_association" "tf-nacl-association-a" {
 resource "aws_network_acl_association" "tf-nacl-association-b" {
   network_acl_id = aws_network_acl.tf-pvt-nacl.id
   subnet_id      = var.subnet_ids["az-b"]
+}
+
+# Definindo security group para instância ec2
+resource "aws_security_group" "tf-https-vpc-sg" {
+  name        = "tf-https-vpc-sg"
+  description = "Permite trafego https do cidr block da vpc"
+  vpc_id      = var.vpc_id
+
+  ingress {
+    protocol    = "tcp"
+    from_port   = 443
+    to_port     = 443
+    cidr_blocks = [var.vpc_cidr_block]
+    description = "Porta 443 do intervalo da vpc"
+  }
+
+  tags = {
+    "Name" = "tf-https-vpc-sg"
+  }
 }
