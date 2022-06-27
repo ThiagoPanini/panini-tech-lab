@@ -1,26 +1,19 @@
-/* ----------------------------------------
-MODULES: modules/network
-FILE: variables.tf
+/* --------------------------------------------------
+FILE: variables.tf @ network module
 
-Declaração de variáveis relacionadas a recursos
-de redes a serem implantados na infraestrutura
----------------------------------------- */
+CONTEXT: Arquivo de declaração de variáveis a ser 
+utilizado nos recursos criados especificamente neste
+módulo.
+
+GOAL: O objetivo deste arquivo é concentrar a declaração
+de variáveis cabíveis ao contexto de redes para os
+recursos implantados no módulo main.tf. Entre as
+variáveis consideradas, será possível encontrar
+blocos CIDR para facilitar a definição do intervalo
+de endereços de uma VPC e de suas respectivas subnets.
+-------------------------------------------------- */
 
 variable "vpc_cidr_block" {
   description = "Bloco cidr que define o intervalo de endereços de ip da vpc"
   type        = string
-  default     = "172.11.0.0/16"
-}
-
-variable "subnet_config" {
-  description = "Configurações de blocos cidr para cada subnet em cada zona de disponibilidade"
-  type        = map(any)
-  default = {
-    "us-east-1a" = {
-      "private" = "172.11.0.0/24"
-    },
-    "us-east-1b" = {
-      "private" = "172.11.1.0/24"
-    }
-  }
 }
