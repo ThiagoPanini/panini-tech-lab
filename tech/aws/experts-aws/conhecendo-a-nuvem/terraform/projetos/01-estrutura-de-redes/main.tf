@@ -28,7 +28,8 @@ arquivos main.tf
 module "network" {
   source = "./modules/network"
 
-  vpc_cidr_block = var.vpc_cidr_block
+  vpc_cidr_block    = var.vpc_cidr_block
+  security_group_id = module.firewall.https_security_group_id
 }
 
 # Chamada do módulo ./modules/firewall
@@ -37,7 +38,7 @@ module "firewall" {
 
   vpc_id         = module.network.vpc_id
   vpc_cidr_block = module.network.vpc_cidr_block
-  subnet_ids     = module.network.subnet_ids
+  subnet_id      = module.network.subnet_id
 }
 
 # Chamada do módulo ./modules/iam
@@ -53,7 +54,7 @@ module "compute" {
 
   instance_ami      = var.instance_ami
   instance_type     = var.instance_type
-  subnet_ids        = module.network.subnet_ids
+  subnet_id         = module.network.subnet_id
   security_group_id = module.firewall.https_security_group_id
   instance_profile  = module.iam.ssm_ec2_instance_profile
 }
