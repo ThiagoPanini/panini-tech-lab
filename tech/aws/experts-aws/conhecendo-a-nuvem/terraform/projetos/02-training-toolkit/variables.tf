@@ -24,7 +24,7 @@ variable "aws_provider_config" {
 variable "enable_force_destroy" {
   description = "Habilita eliminação de objetos do bucket na aplicação do terraform destroy"
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "bucket_folders" {

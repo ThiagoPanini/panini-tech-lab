@@ -35,4 +35,7 @@ module "storage" {
   bucket_folders           = var.bucket_folders
   local_upload_data_path   = var.local_upload_data_path
   local_upload_lambda_path = var.local_upload_lambda_path
+
+  flag_data_path   = true
+  flag_lambda_path = true
 }
