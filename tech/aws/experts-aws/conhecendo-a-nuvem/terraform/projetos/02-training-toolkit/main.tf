@@ -36,6 +36,15 @@ module "storage" {
   local_upload_data_path   = var.local_upload_data_path
   local_upload_lambda_path = var.local_upload_lambda_path
 
-  flag_data_path   = true
+  flag_data_path   = false
   flag_lambda_path = true
+}
+
+# Chamada do módulo ./modules/lambda
+module "lambda" {
+  source = "./modules/lambda"
+
+  bucket_name       = module.storage.bucket_name
+  s3_functions_keys = var.s3_functions_keys
+  lambda_config     = var.lambda_config
 }

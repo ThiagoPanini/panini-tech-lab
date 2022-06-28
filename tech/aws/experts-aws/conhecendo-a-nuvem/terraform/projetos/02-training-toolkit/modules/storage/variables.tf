@@ -6,8 +6,8 @@ utilizado nos recursos criados especificamente neste
 módulo.
 
 GOAL: O objetivo deste arquivo é concentrar a declaração
-de variáveis cabíveis ao contexto da instância EC2
-a ser construída em subnet privada e conexão via SSM
+de variáveis para toda a construção do ambiente de
+armazenamento dos dados e insumos no s3
 -------------------------------------------------- */
 
 variable "bucket_name" {

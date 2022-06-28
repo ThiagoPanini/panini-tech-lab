@@ -44,3 +44,31 @@ variable "local_upload_lambda_path" {
   type        = string
   default     = "../../../../core-services-lambda/"
 }
+
+variable "s3_functions_folder" {
+  description = "Identificação do folder de armazenamento das packages das funções Lambda"
+  type        = string
+  default     = "resources/lambda"
+}
+
+variable "s3_functions_keys" {
+  description = "Dicionário que referencia as chaves de cada função Lambda no bucket s3"
+  type        = map(string)
+  default = {
+    "pratica01" = "resources/lambda/pratica01-primeira-funcao/experts-aws-lambda-101.zip"
+  }
+}
+
+variable "lambda_config" {
+  type = map(any)
+  default = {
+    "experts-aws-lambda-101" = {
+      "s3_key" : "resources/lambda/pratica01-primeira-funcao/experts-aws-lambda-101.zip"
+      "iam_resource" : "pratica01"
+    }
+    "experts-aws-lambda-102" = {
+      "s3_key" : "resources/lambda/pratica02-modulos-adicionais/experts-aws-lambda-102.zip"
+      "iam_resource" : "pratica01"
+    }
+  }
+}
