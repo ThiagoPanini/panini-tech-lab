@@ -30,7 +30,19 @@ variable "local_upload_data_path" {
   type        = string
 }
 
+variable "flag_data_path" {
+  description = "Flag para realização do upload de bases de dados"
+  type        = bool
+  default     = true
+}
+
 variable "local_upload_lambda_path" {
   description = "Caminho local de armazenamento das funções lambda que serão inseridas no s3"
   type        = string
+}
+
+variable "flag_lambda_path" {
+  description = "Flag para realização do upload de funções lambda"
+  type        = bool
+  default     = true
 }
