@@ -212,3 +212,7 @@ override.tf.json
 # Ignore CLI configuration files
 .terraformrc
 terraform.rc
+
+# Arquivos temporários do drawio
+*.drawio.bkp
+*.drawio.dtmp
