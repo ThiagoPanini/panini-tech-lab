@@ -32,12 +32,12 @@ RESOURCES: Os recursos aqui implantados serão:
 
 # Função experts-aws-lambda-101
 resource "aws_lambda_function" "experts" {
-  for_each      = var.lambda_config
+  for_each      = var.lambda_configs
   function_name = each.key
-  runtime       = "python3.8"
+  runtime       = var.runtime
+  role          = each.value.iam_role
 
   s3_bucket = var.bucket_name
-  s3_key    = each.value["s3_key"]
-  role      = aws_iam_role.pratica01.arn
+  s3_key    = each.value.s3_zip_key
   handler   = "lambda_function.py"
 }

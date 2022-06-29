@@ -76,7 +76,7 @@ resource "aws_iam_role" "lambda-101" {
 }
 
 resource "aws_iam_role_policy_attachment" "lambda-101" {
-  role       = aws_iam_role.pratica01.name
+  role       = aws_iam_role.lambda-101.name
   policy_arn = aws_iam_policy.lambda_logging.arn
 }
 

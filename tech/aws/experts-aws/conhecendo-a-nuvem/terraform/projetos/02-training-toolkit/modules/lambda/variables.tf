@@ -19,3 +19,7 @@ variable "bucket_name" {
   description = "Nome do bucket s3 criado para consolidação dos objetos do tookit de capacitação"
   type        = string
 }
+
+variable "lambda_configs" {
+  type = map(any)
+}

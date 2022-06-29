@@ -11,5 +11,5 @@ policies e roles IAM aqui descritas.
 
 output "role_lambda_101" {
   description = "Role iam para função experts-aws-lambda-role-101"
-  value       = aws_iam_role.lambda-101
+  value       = aws_iam_role.lambda-101.arn
 }

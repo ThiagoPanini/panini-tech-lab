@@ -40,11 +40,26 @@ module "storage" {
   flag_lambda_path = true
 }
 
+# Chamada do módulo ./modules/iam
+module "iam" {
+  source = "./modules/iam"
+}
+
+# Definição de elemento para facilitar a criação das funções
+locals {
+  lambda_configs = {
+    "experts-aws-lambda-101" : {
+      "s3_zip_key" = "resources/lambda/pratica01-primeira-funcao/experts-aws-lambda-101.zip"
+      "iam_role"   = module.iam.role_lambda_101
+    }
+  }
+}
+
 # Chamada do módulo ./modules/lambda
 module "lambda" {
   source = "./modules/lambda"
 
-  bucket_name       = module.storage.bucket_name
-  s3_functions_keys = var.s3_functions_keys
-  lambda_config     = var.lambda_config
+  lambda_configs = local.lambda_configs
+  runtime        = var.lambda_runtime
+  bucket_name    = module.storage.bucket_name
 }
