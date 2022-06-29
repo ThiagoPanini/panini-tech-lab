@@ -72,3 +72,9 @@ variable "lambda_config" {
     }
   }
 }
+
+variable "lambda_runtime" {
+  description = "Linguagem de programação das funções lambda criadas"
+  type        = string
+  default     = "python3.8"
+}

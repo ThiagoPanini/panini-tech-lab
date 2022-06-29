@@ -10,16 +10,12 @@ de variáveis cabíveis ao contexto da instância EC2
 a ser construída em subnet privada e conexão via SSM
 -------------------------------------------------- */
 
-variable "bucket_name" {
-  description = "Nome do bucket s3 criado para consolidação dos objetos do tookit de capacitação"
+variable "runtime" {
+  description = "Linguagem de programação das funções lambda criadas"
   type        = string
 }
 
-variable "s3_functions_keys" {
-  description = "Dicionário que referencia as chaves de cada função Lambda no bucket s3"
-  type        = map(string)
-}
-
-variable "lambda_config" {
-  type = map(any)
+variable "bucket_name" {
+  description = "Nome do bucket s3 criado para consolidação dos objetos do tookit de capacitação"
+  type        = string
 }
