@@ -56,10 +56,11 @@ locals {
 }
 
 # Chamada do módulo ./modules/lambda
-module "lambda" {
+/* module "lambda" {
   source = "./modules/lambda"
 
   lambda_configs = local.lambda_configs
   runtime        = var.lambda_runtime
   bucket_name    = module.storage.bucket_name
 }
+*/
