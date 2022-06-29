@@ -13,6 +13,7 @@ def lambda_handler(event, context):
         'body': json.dumps('Voce esta ouvindo sua musica preferida!')
     }
 
+
 """
 ---------------------------------------------------
 ------------ BLOCO DE TESTES DA FUNÇÃO ------------
