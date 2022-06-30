@@ -36,31 +36,61 @@ module "storage" {
   local_upload_data_path   = var.local_upload_data_path
   local_upload_lambda_path = var.local_upload_lambda_path
 
-  flag_data_path   = false
-  flag_lambda_path = true
+  flag_upload_data_files      = false
+  flag_upload_lambda_packages = true
 }
 
 # Chamada do módulo ./modules/iam
 module "iam" {
   source = "./modules/iam"
+
+  bucket_name = module.storage.bucket_name
 }
 
 # Definição de elemento para facilitar a criação das funções
 locals {
   lambda_configs = {
     "experts-aws-lambda-101" : {
-      "s3_zip_key" = "resources/lambda/pratica01-primeira-funcao/experts-aws-lambda-101.zip"
-      "iam_role"   = module.iam.role_lambda_101
+      "s3_zip_key" = "services/lambda/pratica01-primeira-funcao/experts-aws-lambda-101.zip"
+      "iam_role"   = module.iam.lambda-basic-role
+    }
+    "experts-aws-lambda-102" : {
+      "s3_zip_key" = "services/lambda/pratica02-modulos-adicionais/experts-aws-lambda-102.zip"
+      "iam_role"   = module.iam.lambda-basic-role
+    }
+    "experts-aws-lambda-103" : {
+      "s3_zip_key" = "services/lambda/pratica03-integracao-s3/experts-aws-lambda-103.zip"
+      "iam_role"   = module.iam.lambda-103
+    }
+    "experts-aws-lambda-104" : {
+      "s3_zip_key" = "services/lambda/pratica04-gatilho-s3/experts-aws-lambda-104.zip"
+      "iam_role"   = module.iam.lambda-104
+    }
+    "experts-aws-lambda-105" : {
+      "s3_zip_key" = "services/lambda/pratica05-desliga-ec2/experts-aws-lambda-105.zip"
+      "iam_role"   = module.iam.lambda-105
+    }
+    "experts-aws-lambda-106" : {
+      "s3_zip_key" = "services/lambda/pratica06-elimina-ebs/experts-aws-lambda-106.zip"
+      "iam_role"   = module.iam.lambda-106
+    }
+    "experts-aws-lambda-107" : {
+      "s3_zip_key" = "services/lambda/pratica07-s3-to-dynamodb/experts-aws-lambda-107.zip"
+      "iam_role"   = module.iam.lambda-107
+    }
+    "experts-aws-lambda-108" : {
+      "s3_zip_key" = "services/lambda/pratica08-gatilho-sqs/experts-aws-lambda-108.zip"
+      "iam_role"   = module.iam.lambda-108
     }
   }
 }
 
 # Chamada do módulo ./modules/lambda
-/* module "lambda" {
+module "lambda" {
   source = "./modules/lambda"
 
   lambda_configs = local.lambda_configs
   runtime        = var.lambda_runtime
   bucket_name    = module.storage.bucket_name
 }
-*/
+

@@ -24,13 +24,13 @@ variable "aws_provider_config" {
 variable "enable_force_destroy" {
   description = "Habilita eliminação de objetos do bucket na aplicação do terraform destroy"
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "bucket_folders" {
   description = "Lista de folders a serem criados no bucket alvo para posterior recepção dos objetos"
   type        = list(string)
-  default     = ["data/", "resources/lambda/", "resources/glue/"]
+  default     = ["data/", "services/lambda/", "services/glue/"]
 }
 
 variable "local_upload_data_path" {
@@ -43,34 +43,6 @@ variable "local_upload_lambda_path" {
   description = "Caminho local de armazenamento das funções lambda que serão inseridas no s3"
   type        = string
   default     = "../../../../core-services-lambda/"
-}
-
-variable "s3_functions_folder" {
-  description = "Identificação do folder de armazenamento das packages das funções Lambda"
-  type        = string
-  default     = "resources/lambda"
-}
-
-variable "s3_functions_keys" {
-  description = "Dicionário que referencia as chaves de cada função Lambda no bucket s3"
-  type        = map(string)
-  default = {
-    "pratica01" = "resources/lambda/pratica01-primeira-funcao/experts-aws-lambda-101.zip"
-  }
-}
-
-variable "lambda_config" {
-  type = map(any)
-  default = {
-    "experts-aws-lambda-101" = {
-      "s3_key" : "resources/lambda/pratica01-primeira-funcao/experts-aws-lambda-101.zip"
-      "iam_resource" : "pratica01"
-    }
-    "experts-aws-lambda-102" = {
-      "s3_key" : "resources/lambda/pratica02-modulos-adicionais/experts-aws-lambda-102.zip"
-      "iam_resource" : "pratica01"
-    }
-  }
 }
 
 variable "lambda_runtime" {
