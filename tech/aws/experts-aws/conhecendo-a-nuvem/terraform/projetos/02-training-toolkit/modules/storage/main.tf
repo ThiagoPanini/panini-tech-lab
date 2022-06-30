@@ -50,7 +50,7 @@ resource "aws_s3_object" "bucket_folders" {
 
 # Realizando o upload de bases de dados
 resource "aws_s3_object" "bucket_data_sources" {
-  for_each = var.flag_data_path ? fileset(var.local_upload_data_path, "**") : []
+  for_each = var.flag_upload_data_files ? fileset(var.local_upload_data_path, "**") : []
   bucket   = aws_s3_bucket.private_training_bucket.bucket
   key      = "data/${each.value}"
   source   = "${var.local_upload_data_path}${each.value}"
@@ -60,9 +60,9 @@ resource "aws_s3_object" "bucket_data_sources" {
 
 # Realizando o upload de funções lambda
 resource "aws_s3_object" "bucket_lambda_functions" {
-  for_each = var.flag_lambda_path ? fileset(var.local_upload_lambda_path, "**") : []
+  for_each = var.flag_upload_lambda_packages ? fileset(var.local_upload_lambda_path, "**") : []
   bucket   = aws_s3_bucket.private_training_bucket.bucket
-  key      = "resources/lambda/${each.value}"
+  key      = "services/lambda/${each.value}"
   source   = "${var.local_upload_lambda_path}${each.value}"
   #etag                   = filemd5("${var.local_upload_lambda_path}${each.value}")
   server_side_encryption = "aws:kms"

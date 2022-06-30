@@ -30,7 +30,7 @@ variable "local_upload_data_path" {
   type        = string
 }
 
-variable "flag_data_path" {
+variable "flag_upload_data_files" {
   description = "Flag para realização do upload de bases de dados"
   type        = bool
   default     = true
@@ -41,7 +41,7 @@ variable "local_upload_lambda_path" {
   type        = string
 }
 
-variable "flag_lambda_path" {
+variable "flag_upload_lambda_packages" {
   description = "Flag para realização do upload de funções lambda"
   type        = bool
   default     = true
