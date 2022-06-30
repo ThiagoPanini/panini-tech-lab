@@ -26,7 +26,11 @@ arquivos main.tf
 data "aws_region" "current" {}
 data "aws_caller_identity" "current" {}
 
-# Chamada do módulo ./modules/storage
+
+/* --------------------------------------------------
+------------------ MÓDULO: STORAGE ------------------
+-------- Consolidando o armazenamento no s3 ---------
+-------------------------------------------------- */
 module "storage" {
   source = "./modules/storage"
 
@@ -40,14 +44,33 @@ module "storage" {
   flag_upload_lambda_packages = true
 }
 
-# Chamada do módulo ./modules/iam
+
+/* --------------------------------------------------
+-------------------- MÓDULO: IAM --------------------
+-------- Políticas e roles para os recursos ---------
+-------------------------------------------------- */
 module "iam" {
   source = "./modules/iam"
 
   bucket_name = module.storage.bucket_name
 }
 
-# Definição de elemento para facilitar a criação das funções
+
+/* --------------------------------------------------
+------------------ MÓDULO: NETWORK ------------------
+----------- Estrutura de redes do projeto -----------
+-------------------------------------------------- */
+module "network" {
+  source = "./modules/network"
+
+  vpc_cidr_block = var.vpc_cidr_block
+}
+
+
+/* --------------------------------------------------
+------------------ MÓDULO: LAMBDA -------------------
+---------- Funções lambda para exploração -----------
+-------------------------------------------------- */
 locals {
   lambda_configs = {
     "experts-aws-lambda-101" : {

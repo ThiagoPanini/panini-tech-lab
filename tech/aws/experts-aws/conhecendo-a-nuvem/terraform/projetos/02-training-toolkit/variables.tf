@@ -33,6 +33,12 @@ variable "bucket_folders" {
   default     = ["data/", "services/lambda/", "services/glue/"]
 }
 
+variable "vpc_cidr_block" {
+  description = "Bloco CIDR que define o intervalo de endereços possíveis dentro de uma VPC"
+  type        = string
+  default     = "172.100.0.0/16"
+}
+
 variable "local_upload_data_path" {
   description = "Caminho local de armazenamento das bases de dados que serão inseridos no s3"
   type        = string
