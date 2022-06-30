@@ -77,17 +77,6 @@ resource "aws_security_group_rule" "sg-inbound-all" {
   description              = "Permite todo trafego de entrada para requisicoes vindas do proprio sg"
 }
 
-resource "aws_security_group_rule" "sg-outbound-https" {
-  security_group_id = aws_security_group.restricted.id
-  type              = "egress"
-  protocol          = "tcp"
-  from_port         = 443
-  to_port           = 443
-  cidr_blocks       = ["0.0.0.0/0"]
-  description       = "Permite saida para qualquer endereco sob o protocolo https na porta 443"
-}
-
-
 resource "aws_security_group_rule" "sg-outbound-all" {
   security_group_id        = aws_security_group.restricted.id
   type                     = "egress"
@@ -105,9 +94,8 @@ resource "aws_vpc_endpoint" "ec2-ssm" {
   service_name      = "com.amazonaws.${data.aws_region.current.name}.${each.key}"
   vpc_endpoint_type = "Interface"
 
-  security_group_ids = [
-    aws_security_group.restricted.id,
-  ]
+  subnet_ids         = [aws_subnet.private.id]
+  security_group_ids = [aws_security_group.restricted.id]
 
   private_dns_enabled = true
 }
