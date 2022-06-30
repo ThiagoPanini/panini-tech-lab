@@ -33,8 +33,4 @@ resource "aws_instance" "tf-ec2" {
     encrypted             = true
     #kms_key_id            = data.aws_kms_key.ebs.key_id
   }
-
-  tags = {
-    "Name" = "tf-ec2-ssm"
-  }
 }
