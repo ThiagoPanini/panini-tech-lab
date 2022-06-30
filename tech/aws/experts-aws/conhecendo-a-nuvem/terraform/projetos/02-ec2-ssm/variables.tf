@@ -24,7 +24,7 @@ variable "aws_provider_config" {
 variable "vpc_cidr_block" {
   description = "Bloco CIDR que define o intervalo de endereços possíveis dentro de uma VPC"
   type        = string
-  default     = "172.100.0.0/16"
+  default     = "172.11.0.0/16"
 }
 
 variable "ssm_policy_arn" {
