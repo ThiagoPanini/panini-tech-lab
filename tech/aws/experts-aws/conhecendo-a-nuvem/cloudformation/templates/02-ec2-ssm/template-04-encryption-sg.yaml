@@ -16,12 +16,12 @@ Mappings:
     CreateNetworkInfra:
       Flag: True
     CidrBlock:
-      VPC: 172.33.0.0/16
-      Subnet1a: 172.33.0.0/24
+      VPC: 172.10.0.0/16
+      Subnet1a: 172.10.0.0/24
   Compute:
     EC2:
       Type: t2.micro
-      ImageId: ami-0cff7528ff583bf9a  
+      ImageId: ami-037c192f0fa52a358 
 # -----------------------------------------------------------------
 # [MAPPINGS]
 # Seção responsável por consolidar variáveis utilizadas no template
@@ -102,12 +102,26 @@ Resources:
       VpcId: !Ref VPC
       GroupName: cfn-https-ssm
       GroupDescription: Permite acesso HTTPS de recursos no range da VPC
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: 443
-          ToPort: 443
-          CidrIp: !GetAtt VPC.CidrBlock
-          Description: Acesso via porta 443 do intervalo de IPs da VPC
+  InboundRule:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      IpProtocol: -1
+      SourceSecurityGroupId: !GetAtt
+        - EC2SecurityGroup
+        - GroupId
+      GroupId: !GetAtt
+        - EC2SecurityGroup
+        - GroupId
+  OutboundRule:
+    Type: AWS::EC2::SecurityGroupEgress
+    Properties:
+      IpProtocol: -1
+      DestinationSecurityGroupId: !GetAtt
+        - EC2SecurityGroup
+        - GroupId
+      GroupId: !GetAtt
+        - EC2SecurityGroup
+        - GroupId
   EC2Instance:
     Type: AWS::EC2::Instance
     Properties:
@@ -117,9 +131,13 @@ Resources:
       IamInstanceProfile: !Ref EC2InstanceProfile
       SecurityGroupIds:
         - !Ref EC2SecurityGroup
-      Tags:
-        - Key: Name
-          Value: cfn-ec2-ssm
+      BlockDeviceMappings:
+        - DeviceName: /dev/xvda
+          Ebs:
+            VolumeType: gp2
+            VolumeSize: 8
+            DeleteOnTermination: True
+            Encrypted: True
   # Endpoints VPC para conexão privada via SSM
   VPCEndpointSSM:
     Type: AWS::EC2::VPCEndpoint
@@ -149,6 +167,17 @@ Resources:
       VpcEndpointType: Interface
       PrivateDnsEnabled: True
       ServiceName: !Sub 'com.amazonaws.${AWS::Region}.ec2messages'
+      VpcId: !Ref VPC
+      SubnetIds:
+        - !Ref PrivateSubnet1a
+      SecurityGroupIds:
+        - !Ref EC2SecurityGroup
+  VPCEndpointEC2:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      VpcEndpointType: Interface
+      PrivateDnsEnabled: True
+      ServiceName: !Sub 'com.amazonaws.${AWS::Region}.ec2'
       VpcId: !Ref VPC
       SubnetIds:
         - !Ref PrivateSubnet1a
