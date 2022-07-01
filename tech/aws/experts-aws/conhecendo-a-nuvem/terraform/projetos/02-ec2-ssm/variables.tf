@@ -37,7 +37,7 @@ variable "ami_mapping" {
   description = "Identificação da AMI utilizada para a instância EC2"
   type        = map(any)
   default = {
-    "sa-east-1" : "ami-037c192f0fa52a358 "
+    "sa-east-1" : "ami-037c192f0fa52a358"
     "us-east-1" : "ami-0cff7528ff583bf9a"
   }
 }
