@@ -4,8 +4,8 @@ import json
 import os
 
 # Definindo variáveis do projeto
-BUCKET = 'aws-experts-dx6sdjz2j7ro-sa-east-1'
-KEY = 'lambda/input/rock_albuns.csv'
+BUCKET = ''
+KEY = 'data/rock-albuns/csv/favoritos.csv'
 
 def lambda_handler(event, context):
     
