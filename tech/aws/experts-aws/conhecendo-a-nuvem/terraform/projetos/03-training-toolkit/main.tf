@@ -26,6 +26,15 @@ arquivos main.tf
 data "aws_region" "current" {}
 data "aws_caller_identity" "current" {}
 
+/* --------------------------------------------------
+----------------- MÓDULO: SECURITY ------------------
+------- Criando chaves e segredos do projeto --------
+-------------------------------------------------- */
+module "security" {
+  source = "./modules/security"
+
+}
+
 
 /* --------------------------------------------------
 ------------------ MÓDULO: STORAGE ------------------
