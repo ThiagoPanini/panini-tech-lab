@@ -18,6 +18,11 @@ data "aws_kms_key" "ebs" {
   key_id = "alias/aws/ebs"
 }
 
+# Coletando ami mais recente
+data "aws_ssm_parameter" "this" {
+  name = "/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2"
+}
+
 # Inicializando instância EC2
 resource "aws_instance" "tf-ec2" {
   ami                    = var.instance_ami
