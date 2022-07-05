@@ -59,7 +59,6 @@ resource "aws_route_table_association" "private" {
   route_table_id = aws_route_table.private.id
   subnet_id      = aws_subnet.private.id
 }
-# TODO: associar rota aos gateway endpoints (levar esse bloco de cima pro final, após a criação dos endpoints)
 
 # Criando security group restrito
 resource "aws_security_group" "restricted" {
@@ -97,4 +96,19 @@ resource "aws_security_group_rule" "sg-outbound-all" {
   to_port                  = 0
   source_security_group_id = aws_security_group.restricted.id
   description              = "Permite todo o trafego de saida para recursos do proprio sg"
+}
+
+# Criando endpoints para s3 e dynamodb
+resource "aws_vpc_endpoint" "s3" {
+  vpc_id            = aws_vpc.project.id
+  service_name      = "com.amazonaws.${data.aws_region.current.name}.s3"
+  vpc_endpoint_type = "Gateway"
+  route_table_ids   = [aws_route_table.private.id]
+}
+
+resource "aws_vpc_endpoint" "dynamodb" {
+  vpc_id            = aws_vpc.project.id
+  service_name      = "com.amazonaws.${data.aws_region.current.name}.dynamodb"
+  vpc_endpoint_type = "Gateway"
+  route_table_ids   = [aws_route_table.private.id]
 }
