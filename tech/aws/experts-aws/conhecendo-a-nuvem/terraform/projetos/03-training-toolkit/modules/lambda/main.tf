@@ -68,5 +68,5 @@ resource "aws_lambda_function" "experts" {
 
   s3_bucket = var.bucket_name
   s3_key    = each.value.s3_zip_key
-  handler   = "lambda_function.py"
+  handler   = "lambda_function.lambda_handler"
 }
