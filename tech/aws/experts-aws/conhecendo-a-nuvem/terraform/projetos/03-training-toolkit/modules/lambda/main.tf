@@ -23,6 +23,35 @@ RESOURCES: Os recursos aqui implantados serão:
 -- Serviços adicionais para composição das funções --
 -------------------------------------------------- */
 
+# Tabela no DynamoDB
+resource "aws_dynamodb_table" "rock-albuns" {
+  name           = "rock-albuns"
+  billing_mode   = "PROVISIONED"
+  read_capacity  = 10
+  write_capacity = 10
+  hash_key       = "banda"
+  range_key      = "album"
+
+  attribute {
+    name = "banda"
+    type = "S"
+  }
+
+  attribute {
+    name = "album"
+    type = "S"
+  }
+
+  server_side_encryption {
+    enabled = true
+  }
+}
+
+# Fila no SQS
+resource "aws_sqs_queue" "rock-albuns-messages" {
+  name              = "rock-albuns-messages"
+  kms_master_key_id = "alias/aws/sqs"
+}
 
 
 /* --------------------------------------------------
