@@ -74,7 +74,7 @@ resource "aws_iam_policy" "s3-get-csv-data" {
         "Sid" : "S3GetCSVObject",
         "Effect" : "Allow",
         "Action" : "s3:GetObject",
-        "Resource" : "arn:aws:s3:::${var.bucket_name}/lambda/input/*.csv"
+        "Resource" : "arn:aws:s3:::${var.bucket_name}/data/rock-albuns/csv/*.csv"
       }
     ]
   })
@@ -92,7 +92,7 @@ resource "aws_iam_policy" "s3-put-json-data" {
         "Sid" : "S3PutJSONObject",
         "Effect" : "Allow",
         "Action" : "s3:PutObject",
-        "Resource" : "arn:aws:s3:::${var.bucket_name}/lambda/output/*.json"
+        "Resource" : "arn:aws:s3:::${var.bucket_name}/data/rock-albuns/json/*.json"
       }
     ]
   })
@@ -158,7 +158,7 @@ resource "aws_iam_policy" "s3-json-to-dynamodb" {
           "Sid" : "S3GetJSONData",
           "Effect" : "Allow",
           "Action" : "s3:GetObject",
-          "Resource" : "arn:aws:s3:::${var.bucket_name}/lambda/output/*.json"
+          "Resource" : "arn:aws:s3:::${var.bucket_name}/data/rock-albuns/json/*.json"
         },
         {
           "Sid" : "DynamoDBManageTables",
