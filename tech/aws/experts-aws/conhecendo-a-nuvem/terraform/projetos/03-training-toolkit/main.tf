@@ -49,7 +49,7 @@ module "storage" {
   local_upload_data_path   = var.local_upload_data_path
   local_upload_lambda_path = var.local_upload_lambda_path
 
-  flag_upload_data_files      = false
+  flag_upload_data_files      = true
   flag_upload_lambda_packages = true
 }
 
