@@ -50,7 +50,7 @@ module "storage" {
   local_upload_lambda_path = var.local_upload_lambda_path
 
   flag_upload_data_files      = true
-  flag_upload_lambda_packages = false
+  flag_upload_lambda_packages = true
 }
 
 
