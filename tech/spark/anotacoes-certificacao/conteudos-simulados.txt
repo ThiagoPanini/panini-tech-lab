@@ -1,0 +1,11 @@
+TÓPICOS PARA ESTUDO - SIMULADO 2:
+    - Slots
+    - Catalog/Catalyst/Plans
+    - Predicate pushdown
+    - Accumulators
+    - Fault tolerance
+    - Memory usage and management
+    - Configuration properties
+    - repartition() e coalesce()
+    - Data skew/broadcast joins/sort-merge joins/skewed DataFrames
+    - MEMORY_ONLY2_ / DISK_ONLY_2 / StorageLevel
